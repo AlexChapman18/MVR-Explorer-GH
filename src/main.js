@@ -1,115 +1,93 @@
-import * as THREE from "three";
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-// import { GLTSLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { TDSLoader } from 'three/addons/loaders/TDSLoader.js';
-import GSD from '/src/GeneralSceneDescription.xml'
-import { JSZip } from 'jszip';
+// src/main.js
+import JSZip from 'jszip';
 
-var zip = new JSZip();
+const fileInput = document.getElementById('fileInput');
+const fileListContainer = document.getElementById('fileList');
 
+fileInput.addEventListener('change', async (event) => {
+  const file = event.target.files[0];
 
+  if (file) {
+    // Handle cases where the file extension is .mvr but it might be a zip file
+    if (file.name.endsWith('.mvr')) {
+      // Try to load the file as a ZIP
+      try {
+        const zip = new JSZip();
+        const loadedZip = await zip.loadAsync(file);
+        const fileEntries = [];
 
-console.log(GSD);
+        // Iterate over each file inside the ZIP
+        loadedZip.forEach((relativePath, zipEntry) => {
+          fileEntries.push({
+            name: zipEntry.name,
+            size: zipEntry._data.uncompressedSize, // size of the file
+            date: zipEntry.date, // date of the file
+            file: zipEntry
+          });
+        });
 
+        // Display the file list
+        displayFileList(fileEntries);
 
-// Create scene
-const w = window.innerWidth;
-const h = window.innerHeight;
-const scene = new THREE.Scene();
-
-// Create camera
-const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 1000);
-camera.position.z = 5;
-
-// Create renderer and set scene
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(w, h);
-renderer.setClearColor(0x333333, 1);
-
-document.body.appendChild(renderer.domElement);
-
-// Set orbit controls (Use mouse to look around)
-const ctrls = new OrbitControls(camera, renderer.domElement);
-ctrls.enableDamping = true;
-
-// Create an instance of TDSLoader
-var loader = new TDSLoader();
-
-// Load the 3DS model
-// loader.load('./assets/Showfiles/capture_demo_show/0x1A6F77A3.3ds', function (DSObject) {
-//   console.log(DSObject);
-//   // When the model is loaded, add it to the scene
-//   scene.add(DSObject);
-//   DSObject.position.set(0, 0, 0); // Optional: Set position if needed
-// });
-
-
-const normal = new THREE.TextureLoader().load('models/3ds/portalgun/textures/normal.jpg');
-
-
-// loader.setResourcePath('./assets/');
-// loader.load('Showfiles/capture_demo_show/0x4EA4B5C9.3ds', function (object) {
-// loader.load('./src/portalgun.3ds', function (object) {
-//   console.log(object)
-//   object.traverse(function (child) {
-//     if (child.isMesh) {
-//       child.material.specular.setScalar(0.1);
-//       child.material.normalMap = normal;
-//     }
-//   });
-//   scene.add(object);
-// });
-
-loader.load('./src/0x1A6F77A3.3ds', function (object) {
-  console.log(object)
-  // object.traverse(function (child) {
-  //   if (child.isMesh) {
-  //     child.material.specular.setScalar(0.1);
-  //     child.material.normalMap = normal;
-  //   }
-  // });
-  object.scale.set(0.001, 0.001, 0.001)
-  object.position.set(0, 0, 0)
-  scene.add(object);
+      } catch (error) {
+        alert("The file is not a valid ZIP archive.");
+      }
+    } else {
+      alert("Please upload a valid .mvr file.");
+    }
+  } else {
+    alert("No file selected.");
+  }
 });
 
+function displayFileList(fileEntries) {
+  // Clear any previous file list
+  fileListContainer.innerHTML = '';
 
+  // Add each file from the ZIP to the file list
+  fileEntries.forEach((file, index) => {
+    const fileItem = document.createElement('div');
+    fileItem.classList.add('file-item');
 
+    // File name
+    const fileName = document.createElement('p');
+    fileName.textContent = `Name: ${file.name}`;
+    fileItem.appendChild(fileName);
 
+    // File size
+    const fileSize = document.createElement('p');
+    fileSize.textContent = `Size: ${formatSize(file.size)}`;
+    fileItem.appendChild(fileSize);
 
+    // File date (last modified date)
+    const fileDate = document.createElement('p');
+    fileDate.textContent = `Date: ${file.date.toLocaleString()}`;
+    fileItem.appendChild(fileDate);
 
+    // Add Extract Button
+    const extractButton = document.createElement('button');
+    extractButton.textContent = `Extract ${file.name}`;
+    extractButton.addEventListener('click', () => extractFile(file.file));
 
-// Create cube
-// const geometry = new THREE.BoxGeometry();
-// const material = new THREE.MeshStandardMaterial({
-//   color: 0xffff00,
-// });
-// const cube = new THREE.Mesh(geometry, material);
-// scene.add(cube);
-
-// Create light
-const light = new THREE.PointLight(0xffffff, 100, 100);
-light.position.z = 20
-scene.add(light);
-
-const directionalLight = new THREE.DirectionalLight(0xffeedd, 3);
-directionalLight.position.set(0, 0, 2);
-scene.add(directionalLight);
-
-// Make cube animate
-function animate() {
-  requestAnimationFrame(animate);
-  // cube.rotation.x += 0.001;
-  // cube.rotation.y += 0.002;
-  renderer.render(scene, camera);
-  ctrls.update();
+    fileItem.appendChild(extractButton);
+    fileListContainer.appendChild(fileItem);
+  });
 }
-animate();
 
-// Handle window resizing
-function handleWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+async function extractFile(zipEntry) {
+  try {
+    // Extract file content (you can also use 'blob', 'arraybuffer', or 'base64' depending on the file type)
+    const fileContent = await zipEntry.async('text');
+    alert(`Content of ${zipEntry.name}: \n\n${fileContent}`);
+  } catch (error) {
+    alert(`Error extracting file: ${error.message}`);
+  }
 }
-window.addEventListener('resize', handleWindowResize, false);
+
+// Utility function to format file size (from bytes to a readable format)
+function formatSize(bytes) {
+  if (bytes === 0) return '0 B';
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + units[i];
+}
