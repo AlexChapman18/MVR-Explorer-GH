@@ -1,11 +1,15 @@
 // src/main.js
 import JSZip from 'jszip';
+import xml2json from 'simple-xml-to-json';
 
-const fileInput = document.getElementById('fileInput');
-const fileListContainer = document.getElementById('fileList');
+// TODO: Learn JS async
+// TODO: Learn GSD structure
 
-fileInput.addEventListener('change', async (event) => {
-  const file = event.target.files[0];
+const fileInput = document.getElementById('fileInput'); // File upload button
+const fileListContainer = document.getElementById('fileList'); // List of files
+
+fileInput.addEventListener('change', async (event) => { // Wait for event to happen (Upload file)
+  const file = event.target.files[0]; // Get the uploaded files
 
   if (file) {
     // Handle cases where the file extension is .mvr but it might be a zip file
@@ -15,6 +19,10 @@ fileInput.addEventListener('change', async (event) => {
         const zip = new JSZip();
         const loadedZip = await zip.loadAsync(file);
         const fileEntries = [];
+
+        // Get and log the MVR GSD
+        const GSD = getGSD(loadedZip);
+        console.log(GSD);
 
         // Iterate over each file inside the ZIP
         loadedZip.forEach((relativePath, zipEntry) => {
@@ -30,7 +38,8 @@ fileInput.addEventListener('change', async (event) => {
         displayFileList(fileEntries);
 
       } catch (error) {
-        alert("The file is not a valid ZIP archive.");
+        alert(error);
+        // alert("The file is not a valid ZIP archive.");
       }
     } else {
       alert("Please upload a valid .mvr file.");
@@ -54,11 +63,6 @@ function displayFileList(fileEntries) {
     fileName.textContent = `Name: ${file.name}`;
     fileItem.appendChild(fileName);
 
-    // File size
-    const fileSize = document.createElement('p');
-    fileSize.textContent = `Size: ${formatSize(file.size)}`;
-    fileItem.appendChild(fileSize);
-
     // File date (last modified date)
     const fileDate = document.createElement('p');
     fileDate.textContent = `Date: ${file.date.toLocaleString()}`;
@@ -67,7 +71,7 @@ function displayFileList(fileEntries) {
     // Add Extract Button
     const extractButton = document.createElement('button');
     extractButton.textContent = `Extract ${file.name}`;
-    extractButton.addEventListener('click', () => extractFile(file.file));
+    extractButton.addEventListener('click', () => alert(extractFile(file.file)));
 
     fileItem.appendChild(extractButton);
     fileListContainer.appendChild(fileItem);
@@ -76,18 +80,17 @@ function displayFileList(fileEntries) {
 
 async function extractFile(zipEntry) {
   try {
-    // Extract file content (you can also use 'blob', 'arraybuffer', or 'base64' depending on the file type)
+    // Return file contents
     const fileContent = await zipEntry.async('text');
-    alert(`Content of ${zipEntry.name}: \n\n${fileContent}`);
+    return fileContent;
   } catch (error) {
     alert(`Error extracting file: ${error.message}`);
   }
 }
 
-// Utility function to format file size (from bytes to a readable format)
-function formatSize(bytes) {
-  if (bytes === 0) return '0 B';
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return (bytes / Math.pow(1024, i)).toFixed(2) + ' ' + units[i];
+// Get the GeneralSceneDescriptor from archive
+async function getGSD(zipEntry) {
+  const xmlFile = await extractFile(zipEntry.file("GeneralSceneDescription.xml"));
+  const jsonFile = xml2json.convertXML(xmlFile);
+  return jsonFile;
 }
