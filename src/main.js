@@ -25,12 +25,12 @@ fileInput.addEventListener('change', async (event) => { // Wait for event to hap
         console.log(GSD);
 
         // Iterate over each file inside the ZIP
-        loadedZip.forEach((relativePath, zipEntry) => {
+        loadedZip.forEach((relativePath, zipArchive) => {
           fileEntries.push({
-            name: zipEntry.name,
-            size: zipEntry._data.uncompressedSize, // size of the file
-            date: zipEntry.date, // date of the file
-            file: zipEntry
+            name: zipArchive.name,
+            size: zipArchive._data.uncompressedSize, // size of the file
+            date: zipArchive.date, // date of the file
+            file: zipArchive
           });
         });
 
@@ -49,7 +49,7 @@ fileInput.addEventListener('change', async (event) => { // Wait for event to hap
   }
 });
 
-function displayFileList(fileEntries) {
+async function displayFileList(fileEntries) {
   // Clear any previous file list
   fileListContainer.innerHTML = '';
 
@@ -71,17 +71,17 @@ function displayFileList(fileEntries) {
     // Add Extract Button
     const extractButton = document.createElement('button');
     extractButton.textContent = `Extract ${file.name}`;
-    extractButton.addEventListener('click', () => alert(extractFile(file.file)));
+    extractButton.addEventListener('click', async () => alert(await extractFile(file.file)));
 
     fileItem.appendChild(extractButton);
     fileListContainer.appendChild(fileItem);
   });
 }
 
-async function extractFile(zipEntry) {
+async function extractFile(zipArchive) {
   try {
     // Return file contents
-    const fileContent = await zipEntry.async('text');
+    const fileContent = await zipArchive.async('text');
     return fileContent;
   } catch (error) {
     alert(`Error extracting file: ${error.message}`);
@@ -89,8 +89,8 @@ async function extractFile(zipEntry) {
 }
 
 // Get the GeneralSceneDescriptor from archive
-async function getGSD(zipEntry) {
-  const xmlFile = await extractFile(zipEntry.file("GeneralSceneDescription.xml"));
+async function getGSD(zipArchive) {
+  const xmlFile = await extractFile(zipArchive.file("GeneralSceneDescription.xml"));
   const jsonFile = xml2json.convertXML(xmlFile);
   return jsonFile;
 }
