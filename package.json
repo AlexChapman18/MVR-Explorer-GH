@@ -1,6 +1,6 @@
 {
-  "homepage": "https://alexchapman18.github.io/MVR-Viewer/",
-  "name": "mvr-viewer",
+  "homepage": "https://alexchapman18.github.io/MVR-Explorer/",
+  "name": "mvr-explorer",
   "private": true,
   "version": "0.0.0",
   "type": "module",
