@@ -1,4 +1,6 @@
 // Package imports
+
+import 'bootswatch/dist/superhero/bootstrap.min.css'; // Added this :boom:
 import * as THREE from "three"; // To create and display animated 3D computer graphics
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'; // Have camera orbit around the rig
 import { MVR } from './classes/MVR';
