@@ -5,12 +5,6 @@ export function parseMatrix(matrixString: string): Matrix4 {
         .slice(1, -1) // Remove the outer curly braces
         .replaceAll('}{', ',') // Im lazy, sorry :(
         .split(',').map(parseFloat);
-    // return new Matrix4(
-    //     matrix[0], matrix[1], matrix[2], 0,
-    //     matrix[3], matrix[4], matrix[5], 0,
-    //     matrix[6], matrix[7], matrix[8], 0,
-    //     matrix[9], matrix[10], matrix[11], 1
-    // );
 
     return new Matrix4(
         matrix[0], matrix[3], matrix[6], matrix[9],

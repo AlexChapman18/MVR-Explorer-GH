@@ -1,4 +1,3 @@
-import * as jsonUtils from '../utils/jsonUtils';
 import * as zipUtils from '../utils/zipUtils';
 import * as matrixUtils from '../utils/matrixUtils';
 import JSZip from 'jszip'; // Handle the .mvr file (just a zip file)
@@ -26,8 +25,6 @@ export class GSD {
         this.models = new Map<string, Matrix4[]>;
         this.parseGSD(jsonObj, unitMatrix.clone());
     }
-
-
 
     parseGSD(json: any, matrix: Matrix4) {
         const Scene = json.GeneralSceneDescription.Scene;
@@ -156,10 +153,6 @@ export class GSD {
             const matrices = this.models.get(Geometry3D._fileName) || [];
             matrices.push(matrix.clone());
             this.models.set(Geometry3D._fileName, matrices);
-
-            if (Geometry3D._fileName == "0x826A5EB7.3ds") {
-                console.log(matrix.clone())
-            }
         }
     }
 }

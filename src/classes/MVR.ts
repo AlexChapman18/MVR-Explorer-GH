@@ -4,11 +4,6 @@ import * as zipUtils from '../utils/zipUtils';
 import { GSD } from './GSD';
 import * as threeUtils from '../utils/threeUtils';
 
-
-
-
-
-
 export class MVR {
     file: File;
     GSD: GSD;
