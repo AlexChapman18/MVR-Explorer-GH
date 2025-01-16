@@ -17,11 +17,10 @@ camera.position.z = 5000;
 camera.position.y = -20000;
 
 // Create renderer and set scene
-const renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
+const MVRCanvas = document.getElementById("MVRCanvas")! as HTMLCanvasElement;
+const renderer = new THREE.WebGLRenderer({ canvas: MVRCanvas, antialias: true, logarithmicDepthBuffer: true });
 renderer.setSize(w, h);
 renderer.setClearColor(0x333333, 1);
-
-document.body.appendChild(renderer.domElement);
 
 // Set orbit controls (Use mouse to look around)
 const ctrls = new OrbitControls(camera, renderer.domElement);
@@ -72,25 +71,18 @@ async function loadScene(file: File) {
     try {
         const models = mvr.models;
         const positions = mvr.GSD.models;
-        // console.log(mvr.GSD.models)
         models.forEach((model) => {
-
-            // console.log("model[0]: " + model[0]);
-            // console.log("model: " + model);
-            // console.log(positions);
             if (positions.get(model[0])) {
                 const modelPositions = positions.get(model[0])!;
 
                 modelPositions.forEach((modelPosition) => {
                     var newModel = model[1].clone();
                     newModel.applyMatrix4(modelPosition);
-                    // console.log(modelPosition)
                     scene.add(newModel);
                 });
             }
 
         })
-        console.log('All models loaded!');
     } catch (error) {
         console.error('Error loading some models', error);
     }

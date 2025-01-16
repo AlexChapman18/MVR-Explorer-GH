@@ -1,6 +1,5 @@
 import JSZip from 'jszip'; // Handle the .mvr file (just a zip file)
 
-
 // Given a zipURL(Local) get the zip file
 export async function loadZip(file: File): Promise<JSZip> {
     const zipArchive: JSZip = await JSZip.loadAsync(file); // Load the archive from the binary data
@@ -29,16 +28,7 @@ export async function getFile(zipArchive: JSZip, name: string): Promise<JSZip.JS
     return file;
 }
 
-
-
-
 export async function getTextContent(zippedFile: JSZip.JSZipObject): Promise<string> {
     // Return string contents
     return await zippedFile.async('text');
 }
-
-
-
-
-
-
