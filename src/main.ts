@@ -1,7 +1,7 @@
 // Package imports
 import * as THREE from "three"; // To create and display animated 3D computer graphics
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { MVR } from "./classes/MVR";
+import { MVR } from "./MVR-Renderer/classes/MVR";
 
 // File Imports
 // import capture_demo_show from './assets/Showfiles/capture_demo_show.mvr'; // Example mvr file
@@ -66,7 +66,7 @@ function loadFile(event: Event): File | never {
 
 // Function to load a zip, extract and load all .3ds files
 async function loadScene(file: File) {
-  const mvr = new MVR(file);
+  const mvr: MVR = new MVR(file);
   await mvr.init(); // Initialize MVR (Load models n stuff)
 
   // Wait for all models to load

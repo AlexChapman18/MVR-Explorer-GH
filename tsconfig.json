@@ -1,3 +1,5 @@
 {
-  "compilerOptions": { "strict": true },
+  "compilerOptions": {
+    "jsx": "react", "strict": true 
+},
 }
