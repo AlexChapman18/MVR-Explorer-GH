@@ -22,3 +22,24 @@ export async function loadModel3ds(modelData: ArrayBuffer): Promise<THREE.Object
         );
     });
 }
+
+export async function loadModelGlb(modelData: ArrayBuffer): Promise<THREE.Object3D> {
+
+    return new Promise((resolve, reject) => {
+        const loader = new GLTFLoader();
+
+        // Create a URL from the ArrayBuffer
+        const modelURL = URL.createObjectURL(new Blob([modelData]));
+
+        loader.load(
+            modelURL,
+            (object) => {
+                resolve(object.scene);
+            },
+            undefined,
+            (error) => {
+                reject(error);
+            }
+        );
+    });
+}

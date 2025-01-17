@@ -13,9 +13,9 @@ export async function getFiles(zipArchive: JSZip, extension: string): Promise<JS
             files.push(zippedFile);
         }
     });
-    if (files.length == 0) {
-        throw new Error('No files found with the extension: \'' + extension + '\'');
-    }
+    // if (files.length == 0) {
+    //     throw new Error('No files found with the extension: \'' + extension + '\'');
+    // }
     return files;
 }
 

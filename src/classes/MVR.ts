@@ -24,15 +24,33 @@ export class MVR {
     }
 
     private async loadModels(zipArchive: JSZip) {
-        const modelFiles: JSZip.JSZipObject[] = await zipUtils.getFiles(zipArchive, ".3ds");
+        const modelFiles3d: JSZip.JSZipObject[] = await zipUtils.getFiles(zipArchive, ".3ds");
+
+        let fileNames: string[] = [];
+        let loadPromises: Promise<THREE.Object3D>[] = [];
 
         // Process each .3ds file
-        const fileNames: string[] = [];
-        const loadPromises = modelFiles.map(async (modelFile) => {
-            fileNames.push(modelFile.name)
-            const modelData = await modelFile.async('arraybuffer');
-            return threeUtils.loadModel3ds(modelData);
-        });
+        if (modelFiles3d) {
+            loadPromises = loadPromises.concat(modelFiles3d.map(async (modelFile) => {
+                fileNames.push(modelFile.name)
+                const modelData = await modelFile.async('arraybuffer');
+                return threeUtils.loadModel3ds(modelData);
+            }));
+        }
+
+        const modelFilesGlb: JSZip.JSZipObject[] = await zipUtils.getFiles(zipArchive, ".glb");
+        // console.log(modelFilesGlb)
+        if (modelFilesGlb) {
+            loadPromises = loadPromises.concat(modelFilesGlb.map(async (modelFile) => {
+                fileNames.push(modelFile.name)
+                const modelData = await modelFile.async('arraybuffer');
+                return threeUtils.loadModelGlb(modelData);
+            }));
+        }
+
+
+        console.log(loadPromises)
+
 
         // Wait for them to all be loaded
         const modelObjects = await Promise.all(loadPromises);
