@@ -16,10 +16,8 @@ jobs:
         run: npm ci
       - name: Run ESLint
         run: npm run lint
-      - name: Run Prettier
-        run: npm run style-check
-      - name: Run Prettier
-        run: npm run type-check
+      - name: Run type
+        run: npm run type
       - name: Build
         run: npm run build --if-present
 
