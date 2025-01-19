@@ -1,158 +1,191 @@
-import * as zipUtils from '../utils/zipUtils';
-import * as matrixUtils from '../utils/matrixUtils';
-import JSZip from 'jszip'; // Handle the .mvr file (just a zip file)
-import { XMLParser } from 'fast-xml-parser';
+import * as zipUtils from "../utils/zipUtils";
+import * as matrixUtils from "../utils/matrixUtils";
+import * as GSDStruct from "../utils/GSDStructure";
+import * as JSZip from "jszip";
+import { XMLParser } from "fast-xml-parser";
 import { Matrix4 } from "three";
 
 export class GSD {
-    models: Map<string, Matrix4[]>;
-    file: JSZip.JSZipObject
+  file: JSZip.JSZipObject;
+  models: Map<string, Matrix4[]> = new Map<string, Matrix4[]>();
 
-    constructor(file: JSZip.JSZipObject) {
-        this.file = file;
+  constructor(file: JSZip.JSZipObject) {
+    this.file = file;
+  }
+
+  async init() {
+    const textContent: string = await zipUtils.getTextContent(this.file);
+
+    const parser = new XMLParser({
+      ignoreAttributes: false, // Do not ignore attributes, keep them in the result
+      attributeNamePrefix: "_", // Prefix for attributes in the result
+      isArray: (name) => {
+        return GSDStruct.alwaysArray.includes(name);
+      },
+    });
+    const jsonObj: GSDStruct.GSDFile = parser.parse(
+      textContent,
+    ) as GSDStruct.GSDFile;
+
+    const unitMatrix: Matrix4 = new Matrix4();
+    this.models = new Map<string, Matrix4[]>();
+    this.parseGSD(jsonObj, unitMatrix.clone());
+  }
+
+  parseGSD(json: GSDStruct.GSDFile, matrix: Matrix4) {
+    const Scene = json.GeneralSceneDescription.Scene;
+    // this.parseAUXData(Scene.AUXData, matrix.clone());
+    this.parseLayersHEAD(Scene.Layers, matrix.clone());
+  }
+
+  // TODO: Implement parseAUXData
+  // parseAUXData(AUXData, matrix: Matrix4) {
+  //     // To be completed
+  // }
+
+  parseLayersHEAD(Layers: GSDStruct.Layers, matrix: Matrix4) {
+    if (Layers.Layer) {
+      this.parseLayers(Layers.Layer, matrix.clone());
     }
+  }
 
-    async init() {
-        const textContent: string = await zipUtils.getTextContent(this.file);
-
-        const parser = new XMLParser({
-            ignoreAttributes: false, // Do not ignore attributes, keep them in the result
-            attributeNamePrefix: "_", // Prefix for attributes in the result
-        });
-        const jsonObj = parser.parse(textContent);
-
-        const unitMatrix: Matrix4 = new Matrix4(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-        this.models = new Map<string, Matrix4[]>;
-        this.parseGSD(jsonObj, unitMatrix.clone());
+  parseLayers(Layers: GSDStruct.Layer[], matrix: Matrix4) {
+    for (const Layer of Layers) {
+      const tmpMatrix: Matrix4 = matrix.clone();
+      if (Layer.Matrix)
+        tmpMatrix.multiply(matrixUtils.parseMatrix(Layer.Matrix));
+      if (Layer.ChildList) {
+        this.parseChildList(Layer.ChildList, tmpMatrix.clone());
+      }
     }
+  }
 
-    parseGSD(json: any, matrix: Matrix4) {
-        const Scene = json.GeneralSceneDescription.Scene;
-        this.parseAUXData(Scene.AUXData, matrix.clone())
-        this.parseLayers(Scene.Layers, matrix.clone())
+  parseChildList(ChildList: GSDStruct.ChildList, matrix: Matrix4) {
+    if (ChildList.GroupObject)
+      this.parseGroupObjects(ChildList.GroupObject, matrix.clone());
+    if (ChildList.SceneObject)
+      this.parseSceneObjects(ChildList.SceneObject, matrix.clone());
+    if (ChildList.FocusPoint)
+      this.parseFocusPoints(ChildList.FocusPoint, matrix.clone());
+    if (ChildList.Fixture)
+      this.parseFixtures(ChildList.Fixture, matrix.clone());
+    if (ChildList.Support)
+      this.parseSupports(ChildList.Support, matrix.clone());
+    if (ChildList.Truss) this.parseTrusses(ChildList.Truss, matrix.clone());
+    if (ChildList.VideoScreen)
+      this.parseVideoScreens(ChildList.VideoScreen, matrix.clone());
+    if (ChildList.Projector)
+      this.parseProjectors(ChildList.Projector, matrix.clone());
+  }
+
+  parseSceneObjects(SceneObjects: GSDStruct.SceneObject[], matrix: Matrix4) {
+    for (const SceneObject of SceneObjects) {
+      const tmpMatrix: Matrix4 = matrix.clone();
+      if (SceneObject.Matrix)
+        tmpMatrix.multiply(matrixUtils.parseMatrix(SceneObject.Matrix));
+      if (SceneObject.Geometries)
+        this.parseGeometries(SceneObject.Geometries, tmpMatrix.clone());
+      if (SceneObject.ChildList)
+        this.parseChildList(SceneObject.ChildList, tmpMatrix.clone());
     }
+  }
 
-    parseAUXData(AUXData, matrix: Matrix4) {
-        // To be completed
+  parseGroupObjects(GroupObjects: GSDStruct.GroupObject[], matrix: Matrix4) {
+    for (const GroupObject of GroupObjects) {
+      const tmpMatrix: Matrix4 = matrix.clone();
+      if (GroupObject.Matrix)
+        tmpMatrix.multiply(matrixUtils.parseMatrix(GroupObject.Matrix));
+      if (GroupObject.ChildList)
+        this.parseChildList(GroupObject.ChildList, tmpMatrix.clone());
     }
+  }
 
-    parseLayers(Layers, matrix: Matrix4) {
-        if (Layers.Layer) {
-            if (Array.isArray(Layers.Layer)) {
-                Layers.Layer.map((layer: any) => this.parseLayer(layer, matrix.clone()))
-            } else {
-                this.parseLayer(Layers.Layer, matrix.clone())
-            }
-        }
+  parseFocusPoints(FocusPoints: GSDStruct.FocusPoint[], matrix: Matrix4) {
+    for (const FocusPoint of FocusPoints) {
+      const tmpMatrix: Matrix4 = matrix.clone();
+      if (FocusPoint.Matrix)
+        tmpMatrix.multiply(matrixUtils.parseMatrix(FocusPoint.Matrix));
+      if (FocusPoint.Geometries)
+        this.parseGeometries(FocusPoint.Geometries, tmpMatrix.clone());
+      if (FocusPoint.ChildList)
+        this.parseChildList(FocusPoint.ChildList, tmpMatrix.clone());
     }
+  }
 
-    parseLayer(Layer, matrix: Matrix4) {
-        if (Layer.Matrix) matrix.multiply(matrixUtils.parseMatrix(Layer.Matrix));
-        if (Layer.ChildList) {
-            if (Array.isArray(Layer.ChildList)) {
-                Layer.ChildList.map((childList: any) => this.parseChildList(childList, matrix.clone()))
-            } else {
-                this.parseChildList(Layer.ChildList, matrix.clone())
-            }
-        }
+  parseFixtures(Fixtures: GSDStruct.Fixture[], matrix: Matrix4) {
+    for (const Fixture of Fixtures) {
+      const tmpMatrix: Matrix4 = matrix.clone();
+      if (Fixture.Matrix)
+        tmpMatrix.multiply(matrixUtils.parseMatrix(Fixture.Matrix));
+      if (Fixture.ChildList)
+        this.parseChildList(Fixture.ChildList, tmpMatrix.clone());
     }
+  }
 
-    parseChildList(ChildList, matrix) {
-        if (ChildList.GroupObject) this.parseGroupObject(ChildList.GroupObject, matrix.clone())
-        if (ChildList.SceneObject) this.parseSceneObject(ChildList.SceneObject, matrix.clone())
-        if (ChildList.FocusPoint) this.parseFocusPoint(ChildList.FocusPoint, matrix.clone())
-        if (ChildList.Fixture) this.parseFixture(ChildList.Fixture, matrix.clone())
-        if (ChildList.Support) this.parseSupport(ChildList.Support, matrix.clone())
-        if (ChildList.Truss) this.parseTruss(ChildList.Truss, matrix.clone())
-        if (ChildList.VideoScreen) this.parseVideoScreen(ChildList.VideoScreen, matrix.clone())
-        if (ChildList.Projector) this.parseProjector(ChildList.Projector, matrix.clone())
+  parseSupports(Supports: GSDStruct.Support[], matrix: Matrix4) {
+    for (const Support of Supports) {
+      const tmpMatrix: Matrix4 = matrix.clone();
+      if (Support.Matrix)
+        tmpMatrix.multiply(matrixUtils.parseMatrix(Support.Matrix));
+      if (Support.Geometries)
+        this.parseGeometries(Support.Geometries, tmpMatrix.clone());
+      if (Support.ChildList)
+        this.parseChildList(Support.ChildList, tmpMatrix.clone());
     }
+  }
 
-    parseSceneObject(SceneObject, matrix) {
-        if (SceneObject && Array.isArray(SceneObject)) SceneObject.map((obj: any) => this.parseSceneObject(obj, matrix.clone()));
-
-        if (SceneObject.Matrix) matrix.multiply(matrixUtils.parseMatrix(SceneObject.Matrix));
-        if (SceneObject.Geometries) this.parseGeometries(SceneObject.Geometries, matrix.clone());
-        if (SceneObject.ChildList) this.parseChildList(SceneObject.ChildList, matrix.clone());
+  parseTrusses(Trusses: GSDStruct.Truss[], matrix: Matrix4) {
+    for (const Truss of Trusses) {
+      const tmpMatrix: Matrix4 = matrix.clone();
+      if (Truss.Matrix)
+        tmpMatrix.multiply(matrixUtils.parseMatrix(Truss.Matrix));
+      if (Truss.Geometries)
+        this.parseGeometries(Truss.Geometries, tmpMatrix.clone());
+      if (Truss.ChildList)
+        this.parseChildList(Truss.ChildList, tmpMatrix.clone());
     }
+  }
 
-    parseGroupObject(GroupObject, matrix) {
-        if (GroupObject && Array.isArray(GroupObject)) GroupObject.map((obj: any) => this.parseFocusPoint(obj, matrix.clone()));
-
-        if (GroupObject.Matrix) matrix.multiply(matrixUtils.parseMatrix(GroupObject.Matrix));
-        if (GroupObject.ChildList) this.parseChildList(GroupObject.ChildList, matrix.clone());
+  parseVideoScreens(VideoScreens: GSDStruct.VideoScreen[], matrix: Matrix4) {
+    for (const VideoScreen of VideoScreens) {
+      const tmpMatrix: Matrix4 = matrix.clone();
+      if (VideoScreen.Matrix)
+        tmpMatrix.multiply(matrixUtils.parseMatrix(VideoScreen.Matrix));
+      if (VideoScreen.Geometries)
+        this.parseGeometries(VideoScreen.Geometries, tmpMatrix.clone());
+      if (VideoScreen.ChildList)
+        this.parseChildList(VideoScreen.ChildList, tmpMatrix.clone());
     }
+  }
 
-
-    parseFocusPoint(FocusPoint, matrix) {
-        if (FocusPoint && Array.isArray(FocusPoint)) FocusPoint.map((obj: any) => this.parseFocusPoint(obj, matrix.clone()));
-        else {
-            if (FocusPoint.Matrix) matrix.multiply(matrixUtils.parseMatrix(FocusPoint.Matrix));
-            if (FocusPoint.Geometries) this.parseGeometries(FocusPoint.Geometries, matrix.clone());
-            if (FocusPoint.ChildList) this.parseChildList(FocusPoint.ChildList, matrix.clone());
-        }
-
+  parseProjectors(Projectors: GSDStruct.Projector[], matrix: Matrix4) {
+    for (const Projector of Projectors) {
+      const tmpMatrix: Matrix4 = matrix.clone();
+      if (Projector.Matrix)
+        tmpMatrix.multiply(matrixUtils.parseMatrix(Projector.Matrix));
+      if (Projector.Geometries)
+        this.parseGeometries(Projector.Geometries, tmpMatrix.clone());
+      if (Projector.ChildList)
+        this.parseChildList(Projector.ChildList, tmpMatrix.clone());
     }
+  }
 
-    parseFixture(Fixture, matrix) {
-        if (Fixture && Array.isArray(Fixture)) Fixture.map((obj: any) => this.parseFixture(obj, matrix.clone()));
-        else {
-            if (Fixture.Matrix) matrix.multiply(matrixUtils.parseMatrix(Fixture.Matrix));
-            if (Fixture.ChildList) this.parseChildList(Fixture.ChildList, matrix.clone());
-        }
+  parseGeometries(Geometries: GSDStruct.Geometries[], matrix: Matrix4) {
+    for (const Geometry of Geometries) {
+      if (Geometry.Geometry3D)
+        this.parseGeometry3D(Geometry.Geometry3D, matrix.clone());
     }
+  }
 
-    parseSupport(Support, matrix) {
-        if (Support && Array.isArray(Support)) Support.map((obj: any) => this.parseSupport(obj, matrix.clone()));
-        else {
-            if (Support.Matrix) matrix.multiply(matrixUtils.parseMatrix(Support.Matrix));
-            if (Support.Geometries) this.parseGeometries(Support.Geometries, matrix.clone());
-            if (Support.ChildList) this.parseChildList(Support.ChildList, matrix.clone());
-        }
+  parseGeometry3D(Geometry3Ds: GSDStruct.Geometry3D[], matrix: Matrix4) {
+    for (const Geometry3D of Geometry3Ds) {
+      const tmpMatrix: Matrix4 = matrix.clone();
+      if (Geometry3D.Matrix)
+        tmpMatrix.multiply(matrixUtils.parseMatrix(Geometry3D.Matrix));
+
+      const matrices = this.models.get(Geometry3D._fileName) || [];
+      matrices.push(tmpMatrix.clone());
+      this.models.set(Geometry3D._fileName, matrices);
     }
-
-    parseTruss(Truss, matrix) {
-        if (Truss && Array.isArray(Truss)) Truss.map((obj: any) => this.parseTruss(obj, matrix.clone()));
-        else {
-            if (Truss.Matrix) matrix.multiply(matrixUtils.parseMatrix(Truss.Matrix));
-            if (Truss.Geometries) this.parseGeometries(Truss.Geometries, matrix.clone());
-            if (Truss.ChildList) this.parseChildList(Truss.ChildList, matrix.clone());
-        }
-    }
-
-    parseVideoScreen(VideoScreen, matrix) {
-        if (VideoScreen && Array.isArray(VideoScreen)) VideoScreen.map((obj: any) => this.parseVideoScreen(obj, matrix.clone()));
-        else {
-            if (VideoScreen.Matrix) matrix.multiply(matrixUtils.parseMatrix(VideoScreen.Matrix));
-            if (VideoScreen.Geometries) this.parseGeometries(VideoScreen.Geometries, matrix.clone());
-            if (VideoScreen.ChildList) this.parseChildList(VideoScreen.ChildList, matrix.clone());
-        }
-    }
-
-    parseProjector(Projector, matrix) {
-        if (Projector && Array.isArray(Projector)) Projector.map((obj: any) => this.parseGeometries(obj, matrix.clone()));
-        else {
-            if (Projector.Matrix) matrix.multiply(matrixUtils.parseMatrix(Projector.Matrix));
-            if (Projector.Geometries) this.parseGeometries(Projector.Geometries, matrix.clone());
-            if (Projector.ChildList) this.parseChildList(Projector.ChildList, matrix.clone());
-        }
-    }
-
-    parseGeometries(Geometries, matrix) {
-        if (Geometries && Array.isArray(Geometries)) Geometries.map((obj: any) => this.parseGeometries(obj, matrix.clone()));
-        else {
-            if (Geometries.Geometry3D) this.parseGeometry3D(Geometries.Geometry3D, matrix.clone());
-        }
-    }
-
-    parseGeometry3D(Geometry3D, matrix) {
-        if (Array.isArray(Geometry3D)) Geometry3D.map((obj: any) => this.parseGeometry3D(obj, matrix.clone()));
-        else {
-            if (Geometry3D.Matrix) matrix.multiply(matrixUtils.parseMatrix(Geometry3D.Matrix));
-
-            const matrices = this.models.get(Geometry3D._fileName) || [];
-            matrices.push(matrix.clone());
-            this.models.set(Geometry3D._fileName, matrices);
-        }
-    }
+  }
 }
