@@ -10,32 +10,41 @@
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-
     "lint": "eslint src/**/*.{ts,tsx}",
     "lint:fix": "eslint src/**/*.{ts,tsx} --fix",
     "style-check": "npx prettier --check src/**/*.{ts,tsx}",
     "style-check:fix": "npx prettier --write src/**/*.{ts,tsx}",
     "type-check": "tsc --noEmit --skipLibCheck",
     "LTS": "npm run lint && npm run style-check && npm run type-check"
-
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
     "@types/xml2js": "^0.4.14",
+    "@vitejs/plugin-react": "^4.3.4",
     "eslint": "^9.18.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
     "gh-pages": "^6.3.0",
     "globals": "^15.14.0",
     "prettier": "3.4.2",
+    "typescript": "~5.6.2",
     "typescript-eslint": "^8.20.0",
     "vite": "^6.0.5",
     "vite-plugin-xml-loader": "^1.0.2"
   },
   "dependencies": {
+    "@types/react-router-dom": "^5.3.3",
     "@types/three": "^0.172.0",
     "eslint-plugin-prettier": "^5.2.2",
     "fast-xml-parser": "^4.5.1",
     "gsap": "^3.12.5",
     "jszip": "^3.10.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router": "^7.1.3",
+    "react-router-dom": "^7.1.3",
     "three": "^0.172.0"
   }
 }
