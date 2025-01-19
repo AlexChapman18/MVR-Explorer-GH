@@ -1,6 +1,6 @@
 name: CI/CD
 
-on: [push, pull_request]
+on: push
 
 jobs:
   build: # Always build and check linters and style pass
@@ -22,20 +22,19 @@ jobs:
         run: npm run type-check
       - name: Build
         run: npm run build --if-present
-      # No tests in place
-      # - name: Run Tests
-      #   run: npm test
 
-  deploy: # Deploy if PR to main
+  # Deploy if push to main
+  deploy:
     permissions:
       contents: write
+
     runs-on: ubuntu-latest
 
     # Ensure Build Passes
     needs: build
 
     # Verify PR to Main
-    if: github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.merged
+    if: github.ref == 'refs/heads/main'
 
     # Build and then deploy page
     steps:
