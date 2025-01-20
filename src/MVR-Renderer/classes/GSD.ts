@@ -1,6 +1,6 @@
-import * as zipUtils from "../utils/zipUtils";
-import * as matrixUtils from "../utils/matrixUtils";
-import * as GSDStruct from "../utils/GSDStructure";
+import * as zipUtils from "../utils/zipUtils.ts";
+import * as matrixUtils from "../utils/matrixUtils.ts";
+import * as GSDStruct from "../utils/GSDStructure.ts";
 import * as JSZip from "jszip";
 import { XMLParser } from "fast-xml-parser";
 import { Matrix4 } from "three";

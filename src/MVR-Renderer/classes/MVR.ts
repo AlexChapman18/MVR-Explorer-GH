@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import * as JSZip from "jszip";
-import * as zipUtils from "../utils/zipUtils";
-import { GSD } from "./GSD";
-import * as threeUtils from "../utils/threeUtils";
+import JSZip from "jszip";
+import * as zipUtils from "../utils/zipUtils.ts";
+import { GSD } from "./GSD.ts";
+import * as threeUtils from "../utils/threeUtils.ts";
 
 export class MVR {
   private file: File;
@@ -40,7 +40,7 @@ export class MVR {
     // Wait for them to all be loaded
     const modelObjects = await Promise.all(loadPromises);
     this.models = fileNames.map(function (e, i) {
-      return [e, modelObjects[i]];
+      return [e, modelObjects[i]!];
     });
   }
 

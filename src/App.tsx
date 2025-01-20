@@ -1,6 +1,4 @@
-// Pages
-import * as React from "react";
-import Home from "./pages/Home";
+import Home from "./pages/Home.tsx";
 import { Route, Routes } from "react-router-dom";
 
 function App() {

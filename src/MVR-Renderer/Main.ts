@@ -1,7 +1,7 @@
 // Package imports
 import * as THREE from "three"; // To create and display animated 3D computer graphics
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"; // Have camera orbit around the rig
-import { MVR } from "./classes/MVR";
+import { MVR } from "./classes/MVR.ts";
 
 // File Imports
 // import capture_demo_show from './assets/Showfiles/capture_demo_show.mvr'; // Example mvr file
@@ -57,7 +57,7 @@ export function initMVRCanvas(
       throw new Error("Error: !target || !target.files");
     }
 
-    const file: File = target.files[0];
+    const file: File = target.files[0]!;
 
     if (!file) {
       throw new Error("No file selected.");

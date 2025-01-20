@@ -1,4 +1,4 @@
-import * as JSZip from "jszip"; // Handle the .mvr file (just a zip file)
+import JSZip from "jszip"; // Handle the .mvr file (just a zip file)
 
 // Given a zipURL(Local) get the zip file
 export async function loadZip(file: File): Promise<JSZip> {

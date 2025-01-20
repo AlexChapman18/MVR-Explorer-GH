@@ -1,6 +1,5 @@
-import * as React from "react";
 import { useEffect, useRef } from "react";
-import { initMVRCanvas } from "../MVR-Renderer/Main";
+import { initMVRCanvas } from "../MVR-Renderer/Main.ts";
 
 function MVRContainer() {
   // Get reference to container
