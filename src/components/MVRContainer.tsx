@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { initMVRCanvas } from "../MVR-Renderer/Main.ts";
+import { init } from "../MVR-Renderer/Main.ts";
 
 function MVRContainer() {
     // Get reference to container
@@ -7,9 +7,9 @@ function MVRContainer() {
 
     // Run initMVRCanvas when container is mounted
     useEffect(() => {
-        initMVRCanvas(refContainer);
+        init(refContainer);
     }, []);
-    return <div ref={refContainer}></div>;
+    return <div ref={refContainer} className="MVRContainer"></div>;
 }
 
 export default MVRContainer;

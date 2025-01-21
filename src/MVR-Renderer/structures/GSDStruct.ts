@@ -1,4 +1,6 @@
-export const alwaysArray = [
+// ------ GSD File Structure ------
+// Based off https://github.com/mvrdevelopment/spec/blob/main/mvr-spec.md#node-definition-layers
+export const GSDArrays = [
     "GroupObject",
     "SceneObject",
     "FocusPoint",
@@ -32,6 +34,8 @@ export interface Layers {
 export interface Layer {
     Matrix?: string;
     ChildList: ChildList;
+    _name: string;
+    _uuid: string;
 }
 
 export interface ChildList {

@@ -2,42 +2,95 @@
 import * as THREE from "three"; // To create and display animated 3D computer graphics
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"; // Have camera orbit around the rig
 import { MVR } from "./classes/MVR.ts";
+import { Model } from "./utils/modelUtils.ts";
 
 // File Imports
 // import capture_demo_show from './assets/Showfiles/capture_demo_show.mvr'; // Example mvr file
 
-export function initMVRCanvas(
-    refContainer: React.MutableRefObject<HTMLElement | null>,
-) {
-    console.log("Iran");
+export function init(refContainer: React.MutableRefObject<HTMLElement | null>) {
+    // Don't render canvases if init is called multiple times
+    if (refContainer.current?.hasChildNodes()) {
+        return;
+    }
+
     // Create scene
-    const w = window.innerWidth;
-    const h = window.innerHeight;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
     const scene = new THREE.Scene();
 
-    // Create camera
-    const camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 100000);
-    camera.position.z = 5000;
-    camera.position.y = -20000;
+    // Create camera, Renderer, controls, and light
+    const camera: THREE.PerspectiveCamera = createCamera();
+    const renderer: THREE.WebGLRenderer = createRenderer();
+    const controls: OrbitControls = createControls();
+    const light: THREE.DirectionalLight = createLight();
 
-    // Create renderer and set scene
-    const renderer = new THREE.WebGLRenderer({
-        antialias: true,
-        logarithmicDepthBuffer: true,
-    });
-    renderer.setSize(w, h);
-    renderer.setClearColor(0x333333, 1);
-
-    refContainer.current?.appendChild(renderer.domElement);
-
-    // Set orbit controls (Use mouse to look around)
-    const ctrls = new OrbitControls(camera, renderer.domElement);
-    ctrls.enableDamping = true;
+    // Add scene to element
+    refContainer.current!.appendChild(renderer.domElement);
 
     // ----- File handling
     const fileInput = document.getElementById("fileInput")!;
     fileInput.addEventListener("change", handleFileUpload);
     // File handling -----
+
+    // Animate scene
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+        controls.update();
+    }
+    animate();
+
+    // Handle window resizing
+    window.addEventListener("resize", handleWindowResize, false);
+
+    // Remove all models on scene
+    function clean() {
+        const meshes: THREE.Mesh[] = [];
+
+        // If a mesh, add to meshes "Executes the callback on this object and all descendants."
+        scene.traverse(function (object) {
+            if (object instanceof THREE.Mesh) meshes.push(object);
+        });
+
+        for (let i = 0; i < meshes.length; i++) {
+            const mesh = meshes[i];
+            if (mesh) {
+                // Material: Material | Material[]
+                const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material]; // If singular, make array
+                materials.forEach((material) => material.dispose()); // Inline dispose
+                mesh.geometry.dispose();
+            }
+            scene.remove(mesh!);
+        }
+    }
+
+    // Handle window resize
+    // TODO: Improve
+    function handleWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    // Create the renderer
+    function createRenderer(): THREE.WebGLRenderer {
+        const renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            logarithmicDepthBuffer: true,
+        });
+        renderer.setSize(width, height);
+        renderer.setClearColor(0x333333, 1);
+        return renderer;
+    }
+
+    // Create orbit controls
+    // TODO: Improve
+    function createControls(): OrbitControls {
+        // Set orbit controls (Use mouse to look around)
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        return controls;
+    }
 
     // Triggered when a file is uploaded
     function handleFileUpload(event: Event) {
@@ -51,70 +104,84 @@ export function initMVRCanvas(
 
     // Load the mvr file
     function loadFile(event: Event): File | never {
-        const target = event.target as HTMLInputElement;
+        const inputElement = event.target as HTMLInputElement;
 
-        if (!target || !target.files) {
-            throw new Error("Error: !target || !target.files");
-        }
+        if (!inputElement || !inputElement.files || !inputElement.files[0])
+            throw new Error("Error, no target or files");
 
-        const file: File = target.files[0]!;
+        const file: File = inputElement.files[0];
 
-        if (!file) {
-            throw new Error("No file selected.");
-        } else if (!file.name.endsWith(".mvr")) {
-            throw new Error("Please upload a valid .mvr file.");
-        } else {
-            return file;
-        }
+        if (!file.name.endsWith(".mvr")) throw new Error("File '" + file.name + "' is not a .mvr file");
+        return file;
+    }
+
+    // Create a base camera
+    function createCamera(): THREE.PerspectiveCamera {
+        const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 100000);
+        return camera;
+    }
+
+    // Move the camera and reset orbit position to 0,0,0
+    function setOrbitCamera(x: number, y: number, z: number) {
+        controls.target = new THREE.Vector3(0, 0, 0);
+        camera.position.set(x, y, z);
+        controls.update();
+    }
+
+    // Create a directional light (Points towards 0,0,0)
+    function createLight(): THREE.DirectionalLight {
+        const light = new THREE.DirectionalLight(0xffeedd, 1);
+        scene.add(light);
+        return light;
+    }
+
+    // Move the light
+    function setLightPosition(x: number, y: number, z: number) {
+        light.position.set(x, y, z);
     }
 
     // Function to load a zip, extract and load all .3ds files
     async function loadScene(file: File) {
+        // Remove existing MVR model if one
+        clean();
+
+        // Create and initialise new MVR model
         const mvr = new MVR(file);
         await mvr.init(); // Initialize MVR (Load models n stuff)
 
-        // Wait for all models to load
+        // Load all models
         try {
-            const models = mvr.models;
-            const positions = mvr.GSD.models;
-            models.forEach((model) => {
-                if (positions.get(model[0])) {
-                    const modelPositions = positions.get(model[0])!;
+            const models: Model[] = mvr.getModels();
+            const boundingBox = new THREE.Box3();
+            const material = new THREE.MeshStandardMaterial(); // Using standard Material for now
 
-                    modelPositions.forEach((modelPosition) => {
-                        const newModel = model[1].clone();
-                        newModel.applyMatrix4(modelPosition);
-                        scene.add(newModel);
-                    });
+            models.forEach((model) => {
+                // Computer bounding sphere(used to place camera at start)
+                if (!model.geometry.boundingBox) {
+                    model.geometry.computeBoundingBox();
                 }
+                boundingBox.union(model.geometry.boundingBox!);
+
+                // Use an instanced mesh to improve performance
+                const instancedMesh = new THREE.InstancedMesh(model.geometry, material, model.modelMetadata.length);
+
+                // Iterate through and set transitionMatrix
+                model.modelMetadata.forEach((modelMetadata, index) => {
+                    instancedMesh.setMatrixAt(index, modelMetadata.matrix);
+                });
+
+                // Force a re-render
+                instancedMesh.instanceMatrix.needsUpdate = true;
+
+                // Add to scene
+                scene.add(instancedMesh);
             });
+
+            // Adjust camera position based on the bounding sphere
+            setOrbitCamera(0, boundingBox.max.y * 1.5, boundingBox.max.z * 1.5);
+            setLightPosition(0, boundingBox.max.y * 1.5, boundingBox.max.z * 1.5);
         } catch (error) {
-            console.error("Error loading some models", error);
+            console.error("Error loading models: ", error);
         }
     }
-
-    // Create light
-    const light = new THREE.PointLight(0xffffff, 100, 9999);
-    light.position.z = 20;
-    scene.add(light);
-
-    const directionalLight = new THREE.DirectionalLight(0xffeedd, 3);
-    directionalLight.position.set(0, 0, 2);
-    scene.add(directionalLight);
-
-    // Make cube animate
-    function animate() {
-        requestAnimationFrame(animate);
-        renderer.render(scene, camera);
-        ctrls.update();
-    }
-    animate();
-
-    // Handle window resizing
-    function handleWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-    window.addEventListener("resize", handleWindowResize, false);
 }

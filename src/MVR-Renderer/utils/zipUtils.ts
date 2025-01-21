@@ -6,30 +6,19 @@ export async function loadZip(file: File): Promise<JSZip> {
     return zipArchive;
 }
 
-export async function getFiles(
-    zipArchive: JSZip,
-    extension: string,
-): Promise<JSZip.JSZipObject[]> {
+// Get all the files from zip with extension
+export async function getFiles(zipArchive: JSZip, extension: string): Promise<JSZip.JSZipObject[]> {
     const files: JSZip.JSZipObject[] = [];
-    zipArchive.forEach(
-        (relativePath: string, zippedFile: JSZip.JSZipObject) => {
-            if (relativePath.endsWith(extension)) {
-                files.push(zippedFile);
-            }
-        },
-    );
-    if (files.length == 0) {
-        throw new Error(
-            "No files found with the extension: '" + extension + "'",
-        );
-    }
+    zipArchive.forEach((relativePath: string, zippedFile: JSZip.JSZipObject) => {
+        if (relativePath.endsWith(extension)) {
+            files.push(zippedFile);
+        }
+    });
     return files;
 }
 
-export async function getFile(
-    zipArchive: JSZip,
-    name: string,
-): Promise<JSZip.JSZipObject> {
+// Get file from zip with extension
+export async function getFile(zipArchive: JSZip, name: string): Promise<JSZip.JSZipObject> {
     const file: JSZip.JSZipObject | null = zipArchive.file(name);
 
     if (file == null) {
@@ -38,9 +27,7 @@ export async function getFile(
     return file;
 }
 
-export async function getTextContent(
-    zippedFile: JSZip.JSZipObject,
-): Promise<string> {
-    // Return string contents
+// Get the text content of a zip file
+export async function getTextContent(zippedFile: JSZip.JSZipObject): Promise<string> {
     return await zippedFile.async("text");
 }
