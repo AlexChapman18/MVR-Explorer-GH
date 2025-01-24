@@ -1,5 +1,24 @@
+// Boiler plate config
 {
   "compilerOptions": {
-    "jsx": "react", "strict": true 
-},
+    "target": "ES2023", // Use a stable version
+    "module": "NodeNext", // Highest version typescript supports
+    "lib": ["DOM", "ESNext"], // Including DOM(Front-end development) and ESNext in project
+    "jsx": "react-jsx", // Using typescript react so need react-jsx for .tsx files 
+    "esModuleInterop": true, // Fix imports
+    "forceConsistentCasingInFileNames": true, // Ensure proper casing is upheld
+    "allowImportingTsExtensions": true, // Allow importing of TS files
+    "resolveJsonModule": true, // Allows importing modules with a .json extension
+    "isolatedModules": true,
+    "noEmit": true, // Disables emitting file from a compilation.
+    "skipLibCheck": true, // Don't check libraries
+    
+    // Strictness
+    "strict": true, // Strict typing
+    "noUncheckedIndexedAccess": true, // Do not infer types of undeclared values
+    "noImplicitOverride": true // Ensure overriding modifier used when overriding
+  },
+
+  "include": ["src"], // Only check source folder
+  "exclude": ["node_modules", "dist"] // Exclude packages and build
 }
