@@ -38,6 +38,16 @@ export class MVR {
 
     // Load GeneralSceneDescription.xml file
     private async loadGSD(zipArchive: JSZip) {
+        const response = await fetch("https://gdtf-share.com/apis/public/login.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user: "Real User 42", password: "123SafePassw0rd456" }),
+        });
+
+        console.log(response);
+
         try {
             const gsdFile = await zipUtils.getFile(zipArchive, GENERAL_SCENE_DESCRIPTION);
             this.GSD = new GSD(gsdFile);
