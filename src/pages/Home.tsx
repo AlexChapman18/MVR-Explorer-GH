@@ -1,11 +1,14 @@
 import MVRContainer from "../components/MVRContainer.tsx";
+import LoadingModal from "../components/LoadingModal.tsx";
+import { ProgressStepsProvider } from "../contexts/ProgressContext.tsx";
 
 function Home() {
     return (
-        <>
-            <input type="file" id="fileInput" accept=".mvr" />
+        <ProgressStepsProvider>
+            <h1 className="text-3xl font-bold underline"> Hello world! </h1>
+            <LoadingModal />
             <MVRContainer />
-        </>
+        </ProgressStepsProvider>
     );
 }
 

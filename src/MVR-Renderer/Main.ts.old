@@ -7,7 +7,7 @@ import { Model } from "./utils/modelUtils.ts";
 // File Imports
 // import capture_demo_show from './assets/Showfiles/capture_demo_show.mvr'; // Example mvr file
 
-export function init(refContainer: React.MutableRefObject<HTMLElement | null>) {
+export function init(refContainer: React.MutableRefObject<HTMLElement | null>, context) {
     // Don't render canvases if init is called multiple times
     if (refContainer.current?.hasChildNodes()) {
         return;
@@ -94,12 +94,16 @@ export function init(refContainer: React.MutableRefObject<HTMLElement | null>) {
 
     // Triggered when a file is uploaded
     function handleFileUpload(event: Event) {
+        const { setVisibility } = context;
+
+        setVisibility(true);
         try {
             const file: File = loadFile(event);
             loadScene(file);
         } catch (error) {
             if (error instanceof Error) alert(error.message); // Handle the error
         }
+        setVisibility(false);
     }
 
     // Load the mvr file
@@ -142,6 +146,8 @@ export function init(refContainer: React.MutableRefObject<HTMLElement | null>) {
 
     // Function to load a zip, extract and load all .3ds files
     async function loadScene(file: File) {
+        const { setCurrentFile, setCurrentFileNum, setTotalNumFiles } = context;
+
         // Remove existing MVR model if one
         clean();
 
@@ -155,7 +161,9 @@ export function init(refContainer: React.MutableRefObject<HTMLElement | null>) {
             const boundingBox = new THREE.Box3();
             const material = new THREE.MeshStandardMaterial(); // Using standard Material for now
 
-            models.forEach((model) => {
+            setTotalNumFiles(models.length);
+
+            models.forEach((model, index) => {
                 // Computer bounding sphere(used to place camera at start)
                 if (!model.geometry.boundingBox) {
                     model.geometry.computeBoundingBox();
@@ -167,6 +175,7 @@ export function init(refContainer: React.MutableRefObject<HTMLElement | null>) {
 
                 // Iterate through and set transitionMatrix
                 model.modelMetadata.forEach((modelMetadata, index) => {
+                    setCurrentFile(modelMetadata.fileName);
                     instancedMesh.setMatrixAt(index, modelMetadata.matrix);
                 });
 
@@ -175,6 +184,8 @@ export function init(refContainer: React.MutableRefObject<HTMLElement | null>) {
 
                 // Add to scene
                 scene.add(instancedMesh);
+
+                setCurrentFileNum(index);
             });
 
             // Adjust camera position based on the bounding sphere
