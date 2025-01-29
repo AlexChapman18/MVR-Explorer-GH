@@ -1,14 +1,15 @@
-import { useMVRFileContext } from "../contexts/MVRFileContext.tsx";
+import { useProgressStepsContext } from "../contexts/ProgressContext.tsx";
+import MVRMain from "../MVR-Renderer/Main.ts";
 
 function FileUpload() {
-    const { setFile } = useMVRFileContext();
+    const psContext = useProgressStepsContext();
 
-    function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const inputElement = event.target as HTMLInputElement;
         if (!inputElement || !inputElement.files || !inputElement.files[0])
             throw new Error("Error, no target or files");
-        setFile(inputElement.files[0]);
-    }
+        MVRMain.loadFile(inputElement.files[0], psContext);
+    };
 
     return <input type="file" id="fileInput" accept=".mvr" onChange={handleFileChange} />;
 }

@@ -32,7 +32,8 @@ export interface ProgressStepsContextType {
     setProgressStatus: (index: number, status: StepStatus) => void; // Set the Status of the Progress Step
     setNumFilesProcessed: (index: number, numFilesProcessed: number) => void; // Set the number of files processed
     setNumFilesToProcess: (index: number, numFilesToProcess: number) => void; // Set the number of files to process
-    resetProgressSteps: () => void;
+    startProgressSteps: () => void;
+    finishProgressSteps: () => void;
 }
 
 const ProgressStepsContext = createContext<ProgressStepsContextType | undefined>(undefined);
@@ -74,13 +75,18 @@ export const ProgressStepsProvider: React.FC<{ children: React.ReactNode }> = ({
         });
     }
 
-    function resetProgressSteps() {
+    function startProgressSteps() {
         setProgressSteps([
             { status: StepStatus.IDLE, numFilesProcessed: 0, numFilesToProcess: 1 },
             { status: StepStatus.IDLE, numFilesProcessed: 0, numFilesToProcess: 1 },
             { status: StepStatus.IDLE, numFilesProcessed: 0, numFilesToProcess: 1 },
             { status: StepStatus.IDLE, numFilesProcessed: 0, numFilesToProcess: 1 },
         ]);
+        setVisibility(true);
+    }
+
+    function finishProgressSteps() {
+        setVisibility(false);
     }
 
     return (
@@ -94,7 +100,8 @@ export const ProgressStepsProvider: React.FC<{ children: React.ReactNode }> = ({
                 setProgressStatus,
                 setNumFilesProcessed,
                 setNumFilesToProcess,
-                resetProgressSteps,
+                startProgressSteps,
+                finishProgressSteps,
             }}
         >
             {children}
