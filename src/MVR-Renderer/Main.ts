@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from "react";
 import * as THREE from "three"; // To create and display animated 3D computer graphics
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"; // Have camera orbit around the rig
 import { MVR } from "../MVR-Renderer/classes/MVR.ts";
@@ -41,7 +40,7 @@ export default {
 
     setRenderer: function (width: number, height: number): void {
         renderer.setSize(width, height);
-        renderer.setClearColor(0x333333, 1);
+        renderer.setClearColor(0x2a2b2e, 1);
     },
 
     handleWindowResize: function () {

@@ -15,6 +15,14 @@ export enum StepStatus {
     ERROR,
 }
 
+export const useProgressStepsContext = () => {
+    const context = useContext(ProgressStepsContext);
+    if (!context) {
+        throw new Error("useProgressStepsContext must be used within a ProgressStepsProvider");
+    }
+    return context;
+};
+
 // Progress Step, i.e. "Extracting MVR"
 export interface ProgressStep {
     status: StepStatus;
@@ -107,12 +115,4 @@ export const ProgressStepsProvider: React.FC<{ children: React.ReactNode }> = ({
             {children}
         </ProgressStepsContext.Provider>
     );
-};
-
-export const useProgressStepsContext = () => {
-    const context = useContext(ProgressStepsContext);
-    if (!context) {
-        throw new Error("useProgressStepsContext must be used within a ProgressStepsProvider");
-    }
-    return context;
 };

@@ -1,16 +1,18 @@
 import MVRContainer from "../components/MVRContainer.tsx";
 import LoadingModal from "../components/LoadingModal.tsx";
 import { ProgressStepsProvider } from "../contexts/ProgressContext.tsx";
-import FileUpload from "../components/FileUpload.tsx";
+import Layout from "../components/Layout.tsx";
+import Actions from "../components/Actions.tsx";
 
 function Home() {
     return (
-        <ProgressStepsProvider>
-            <h1 className="text-3xl font-bold underline"> Hello world! </h1>
-            <FileUpload />
-            <LoadingModal />
-            <MVRContainer />
-        </ProgressStepsProvider>
+        <Layout>
+            <ProgressStepsProvider>
+                <Actions />
+                <LoadingModal />
+                <MVRContainer />
+            </ProgressStepsProvider>
+        </Layout>
     );
 }
 

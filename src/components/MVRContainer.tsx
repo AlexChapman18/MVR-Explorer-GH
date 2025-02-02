@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import MVRMain from "../MVR-Renderer/Main.ts";
 
 function MVRContainer() {
