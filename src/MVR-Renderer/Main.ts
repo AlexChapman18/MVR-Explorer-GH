@@ -17,7 +17,7 @@ export default {
     controls,
     light,
 
-    init: function () {
+    init: function (container: HTMLDivElement) {
         // Only update the view when using controls
         controls.addEventListener("change", function () {
             renderer.render(scene, camera); // render whenever the OrbitControls changes
@@ -29,25 +29,32 @@ export default {
         // Add light to scene
         scene.add(light);
 
-        // Setup renderer
-        this.setRenderer(window.innerWidth, window.innerHeight);
+        this.handleWindowResize(container);
 
         // Handle window resizing
-        window.addEventListener("resize", this.handleWindowResize, false);
+        window.addEventListener(
+            "resize",
+            () => {
+                this.handleWindowResize(container);
+            },
+            false,
+        );
 
         renderer.render(scene, camera);
+    },
+
+    handleWindowResize: function (container: HTMLDivElement) {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.render(scene, camera); // render whenever the screen size changes
     },
 
     setRenderer: function (width: number, height: number): void {
         renderer.setSize(width, height);
         renderer.setClearColor(0x2a2b2e, 1);
-    },
-
-    handleWindowResize: function () {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.render(scene, camera); // render whenever the screen size changes
     },
 
     call: function () {

@@ -1,4 +1,4 @@
-import MVRContainer from "../components/MVRContainer.tsx";
+import CanvasContainer from "../components/CanvasContainer.tsx";
 import LoadingModal from "../components/LoadingModal.tsx";
 import { ProgressStepsProvider } from "../contexts/ProgressContext.tsx";
 import Layout from "../components/Layout.tsx";
@@ -10,7 +10,7 @@ function Home() {
             <ProgressStepsProvider>
                 <Actions />
                 <LoadingModal />
-                <MVRContainer />
+                <CanvasContainer />
             </ProgressStepsProvider>
         </Layout>
     );
