@@ -13,7 +13,7 @@ const FileUpload: IAction = (ActionIcon, containerClasses, iconClasses) => {
     };
 
     return (
-        <label htmlFor="fileInput" className={containerClasses}>
+        <label htmlFor="fileInput" className={containerClasses} key="">
             <ActionIcon classes={iconClasses} />
             <input id="fileInput" type="file" accept=".mvr" onChange={handleFileChange} className="hidden"></input>
         </label>

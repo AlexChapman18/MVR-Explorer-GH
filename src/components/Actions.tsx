@@ -1,3 +1,4 @@
+import React from "react";
 import MVRFile from "../icons/icon_mvr_file.tsx";
 import MVRFolder from "../icons/icon_mvr_folder.tsx";
 import FitScreen from "../icons/icon_fit_screen.tsx";
@@ -8,11 +9,12 @@ import Punter from "../icons/icon_punter.tsx";
 import FileUpload from "./actionComponents/FileUpload.tsx";
 import TmpButton from "./actionComponents/TmpButton.tsx";
 import IActionLogic from "./actionComponents/IAction.ts";
+import Examples from "../icons/icon_examples.tsx";
 
 // All of the actions related to files
 const fileActions = [
-    { actionLabel: "Open Local MVR", ActionIcon: MVRFile, ActionElement: FileUpload },
-    { actionLabel: "Open Example MVR", ActionIcon: MVRFolder, ActionElement: TmpButton },
+    { actionLabel: "Open Local MVR", ActionIcon: MVRFolder, ActionElement: FileUpload },
+    { actionLabel: "Open Example MVR", ActionIcon: Examples, ActionElement: TmpButton },
 ];
 
 // All actions related to camera
@@ -41,6 +43,7 @@ const punterActions = [{ actionLabel: "Punter POV", ActionIcon: Punter, ActionEl
  * @param {IActionButton} props - The hover label
  * @returns {JSX.Element} JSC Action
  */
+
 function CreateActionButton(props: IActionButton): JSX.Element {
     return props.ActionElement(
         props.ActionIcon,
@@ -68,14 +71,13 @@ function Separator() {
 // Create the Action Bar
 function Actions() {
     return (
-        <div className="bg-primary-dark dark:text-white">
-            <ul className="flex ">
-                {fileActions.map((action) => CreateActionButton(action))}
-                <Separator />
-                {cameraActions.map((action) => CreateActionButton(action))}
-                <Separator />
-                {punterActions.map((action) => CreateActionButton(action))}
-            </ul>
+        <div className="bg-primary-dark dark:text-white flex">
+            {/* Add keys to elements, to allow for better DOM updating */}
+            {fileActions.map((action) => React.cloneElement(CreateActionButton(action), { key: action.actionLabel }))}
+            <Separator />
+            {cameraActions.map((action) => React.cloneElement(CreateActionButton(action), { key: action.actionLabel }))}
+            <Separator />
+            {punterActions.map((action) => React.cloneElement(CreateActionButton(action), { key: action.actionLabel }))}
         </div>
     );
 }

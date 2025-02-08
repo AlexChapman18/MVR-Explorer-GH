@@ -6,11 +6,11 @@ import Navigation from "./Navigation.tsx";
 
 function Layout({ children }) {
     return (
-        <div>
+        <>
             <Navigation />
-            <main>{children}</main>
+            <main className="flex flex-col flex-grow min-h-0 min-w-0">{children}</main>
             {/* <Footer /> */}
-        </div>
+        </>
     );
 }
 

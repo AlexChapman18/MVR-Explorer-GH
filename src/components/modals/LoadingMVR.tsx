@@ -1,7 +1,7 @@
 import ProgressSection from "./modal_components/ProgressSection.tsx";
-import { useProgressStepsContext, StepName } from "../contexts/ProgressContext.tsx";
+import { useProgressStepsContext, StepName } from "../../contexts/ProgressContext.tsx";
 
-function LoadingModal() {
+function LoadingMVR() {
     const { isVisible, MVRName, progressSteps } = useProgressStepsContext();
 
     return isVisible ? (
@@ -53,4 +53,4 @@ function LoadingModal() {
     ) : null;
 }
 
-export default LoadingModal;
+export default LoadingMVR;

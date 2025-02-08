@@ -1,13 +1,13 @@
-import * as THREE from "three"; // To create and display animated 3D computer graphics
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"; // Have camera orbit around the rig
 import { MVR } from "../MVR-Renderer/classes/MVR.ts";
 import { Model } from "../MVR-Renderer/utils/modelUtils.ts";
 import { StepStatus, StepName, ProgressStepsContextType } from "../contexts/ProgressContext.tsx";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-const renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
+let renderer: THREE.WebGLRenderer;
+let controls: OrbitControls;
+let camera: THREE.PerspectiveCamera;
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100000);
-const controls = new OrbitControls(camera, renderer.domElement);
 const light = new THREE.DirectionalLight(0xffeedd, 1);
 
 export default {
@@ -17,39 +17,45 @@ export default {
     controls,
     light,
 
-    init: function (container: HTMLDivElement) {
-        // Only update the view when using controls
-        controls.addEventListener("change", function () {
-            renderer.render(scene, camera); // render whenever the OrbitControls changes
-        });
+    init: function (canvas: HTMLCanvasElement) {
+        renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true, canvas: canvas });
+        camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 100000);
+        controls = new OrbitControls(camera, renderer.domElement);
 
-        // Dampen Orbit Controls
+        // Enable damping (inertia) and set damping factor
         controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
 
         // Add light to scene
         scene.add(light);
 
-        this.handleWindowResize(container);
+        const resizeCanvasToDisplaySize = this.resizeCanvasToDisplaySize;
 
-        // Handle window resizing
-        window.addEventListener(
-            "resize",
-            () => {
-                this.handleWindowResize(container);
-            },
-            false,
-        );
+        function animate() {
+            if (resizeCanvasToDisplaySize()) {
+                const canvas = renderer.domElement;
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+            }
+            controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
+        requestAnimationFrame(animate);
 
         renderer.render(scene, camera);
     },
 
-    handleWindowResize: function (container: HTMLDivElement) {
-        camera.aspect = container.clientWidth / container.clientHeight;
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.render(scene, camera); // render whenever the screen size changes
+    resizeCanvasToDisplaySize: function (): boolean {
+        const canvas = renderer.domElement;
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        const needResize = canvas.width !== width || canvas.height !== height;
+        if (needResize) {
+            renderer.setSize(width, height, false);
+        }
+        return needResize;
     },
 
     setRenderer: function (width: number, height: number): void {
