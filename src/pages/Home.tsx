@@ -12,7 +12,7 @@ function Home() {
             <ProgressStepsProvider>
                 {/* Page elements */}
                 <Actions />
-                <div className="flex flex-grow min-h-0">
+                <div className="flex flex-grow min-h-0 bg-primary dark:text-white pt-4 pb-2">
                     <LeftBar />
                     <CanvasContainer />
                     <RightBar />

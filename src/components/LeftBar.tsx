@@ -1,6 +1,6 @@
 function LeftBar() {
     return (
-        <div className="h-full px-3 pb-4 overflow-y-auto bg-primary dark:text-white">
+        <div className="h-full px-3 pb-4 overflow-y-auto">
             <label htmlFor="countries" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                 Select an option
             </label>
