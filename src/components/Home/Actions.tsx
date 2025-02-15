@@ -13,35 +13,38 @@ import { Tooltip } from "react-tooltip";
 
 // All of the actions related to files
 const fileActions = [
-    { actionLabel: "Open Local MVR", ActionIcon: MVRFolder, ActionElement: FileUpload },
+    { actionLabel: "Open Local MVR", ActionIcon: MVRFolder, ActionElement: FileUpload, active: true },
     {
         actionLabel: "Open Example MVR",
         ActionIcon: Examples,
         ActionElement: TmpButton,
         actionClasses: "scale-110",
+        active: false,
     },
 ];
 
 // All actions related to camera
 const cameraActions = [
-    { actionLabel: "Fit MVR to Screen", ActionIcon: FitScreen, ActionElement: TmpButton },
-    { actionLabel: "Reset Camera", ActionIcon: ResetCamera, ActionElement: TmpButton },
+    { actionLabel: "Fit MVR to Screen", ActionIcon: FitScreen, ActionElement: TmpButton, active: false },
+    { actionLabel: "Reset Camera", ActionIcon: ResetCamera, ActionElement: TmpButton, active: false },
     {
         actionLabel: "Camera Perspective",
         ActionIcon: CameraPerspective,
         ActionElement: TmpButton,
         actionClasses: "rotate-25",
+        active: false,
     },
     {
         actionLabel: "Camera Orthographic",
         ActionIcon: CameraOrth,
         ActionElement: TmpButton,
         actionClasses: "rotate-25",
+        active: false,
     },
 ];
 
 // All actions related to Punter POV
-const punterActions = [{ actionLabel: "Punter POV", ActionIcon: Punter, ActionElement: TmpButton }];
+const punterActions = [{ actionLabel: "Punter POV", ActionIcon: Punter, ActionElement: TmpButton, active: false }];
 
 // Components of an Action
 /**
@@ -52,8 +55,8 @@ const punterActions = [{ actionLabel: "Punter POV", ActionIcon: Punter, ActionEl
 function CreateActionButton(props: IActionButton): JSX.Element {
     return props.ActionElement(
         props.ActionIcon,
-        "p-3 hover:bg-gray-800 cursor-pointer actions-tooltip-anchor",
-        "fill-white h-5 w-auto " + props.actionClasses,
+        "p-3 " + (props.active ? "cursor-pointer actions-tooltip-anchor hover:bg-gray-800 " : ""),
+        "h-5 w-auto " + (props.active ? "fill-white " : "fill-gray-700 ") + props.actionClasses,
         props.actionLabel,
     );
 }
@@ -63,6 +66,7 @@ interface IActionButton {
     ActionIcon: ({ classes }: { classes?: string | undefined }) => JSX.Element; // ActionButton Icon
     ActionElement: IActionLogic; // Action Button Logic
     actionClasses?: string; // Additional classes for customising action Icon
+    active: boolean;
 }
 
 // White vertical separator line
