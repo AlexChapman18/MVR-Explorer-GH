@@ -1,6 +1,7 @@
 import { useState } from "react";
 import IconMVRX from "../icons/icon_mvr_x.png";
 import IconGitHub from "../icons/icon_github.tsx";
+import { useProgressStepsContext } from "../contexts/ProgressContext.tsx";
 
 const REPO_URL: string = "https://github.com/AlexChapman18/MVR-Explorer";
 
@@ -53,7 +54,7 @@ const MenuButton = ({ onClick }: { onClick: () => void }) => (
 );
 
 function Navigation() {
-    const fileName = "Example.mvr";
+    const { MVRName } = useProgressStepsContext();
     const [menuOpen, setMenuOpen] = useState(false);
 
     const handleMenuToggle = () => {
@@ -67,7 +68,7 @@ function Navigation() {
                     <img src={IconMVRX} className="h-10" alt="MVR x GDTF cross Logo" />
                     <span className="self-center text-2xl whitespace-nowrap">MVR Explorer</span>
                 </a>
-                <span className="max-md:hidden">{fileName}</span>
+                <span className="max-md:hidden">{MVRName}</span>
                 <div className="flex md:flex-row-reverse">
                     <a className="cursor-pointer" href={REPO_URL}>
                         <IconGitHub classes="fill-white h-10 w-auto ms-4 hover:fill-accent-one transition-colors duration-100" />

@@ -8,8 +8,8 @@ import RightBar from "../components/Home/RightBar.tsx";
 
 function Home() {
     return (
-        <Layout>
-            <ProgressStepsProvider>
+        <ProgressStepsProvider>
+            <Layout>
                 {/* Page elements */}
                 <Actions />
                 <div className="flex flex-grow min-h-0 bg-primary dark:text-white pt-4 pb-2">
@@ -20,8 +20,8 @@ function Home() {
 
                 {/* Modals */}
                 <LoadingModal />
-            </ProgressStepsProvider>
-        </Layout>
+            </Layout>
+        </ProgressStepsProvider>
     );
 }
 

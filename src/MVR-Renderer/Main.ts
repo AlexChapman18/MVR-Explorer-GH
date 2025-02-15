@@ -63,6 +63,7 @@ export default {
         console.log("Calling log");
     },
     loadFile: async function (file: File, PSContext: ProgressStepsContextType) {
+        PSContext.setMVRName(file.name);
         await this.loadScene(file, PSContext); // Wait for loadScene to complete
     },
     // Remove all models from scene and re-render
