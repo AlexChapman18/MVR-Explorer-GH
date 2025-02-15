@@ -80,15 +80,15 @@ function PageContent({ selectedPage = EPage.DETAILS }) {
 }
 
 function DetailsPage() {
-    return <div className="dark:text-white">Details - WIP</div>;
+    return <div className="dark:text-white">WIP: Details</div>;
 }
 
 function SettingsPage() {
-    return <div className="dark:text-white">Settings - WIP</div>;
+    return <div className="dark:text-white">WIP: Settings</div>;
 }
 
 function LayersPage() {
-    return <div className="dark:text-white">Layers - WIP</div>;
+    return <div className="dark:text-white">WIP: Layers</div>;
 }
 
 export default RightBar;
