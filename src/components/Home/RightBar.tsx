@@ -1,28 +1,33 @@
 import { useState } from "react";
 
-import Arrow from "../icons/icon_arrow.tsx";
+import Arrow from "../../icons/icon_arrow.tsx";
 
 function RightBar() {
     const [selectedPage, setPage] = useState(EPage.DETAILS);
-    const [sidebarOpen, setSideBarOpen] = useState(false);
+    const [sidebarOpen, setSideBarOpen] = useState(true);
     const handleViewSidebar = () => {
         setSideBarOpen(!sidebarOpen);
     };
 
     return (
-        <div className="flex">
-            <button className="my-auto h-20 bg-primary-dark cursor-pointer" onClick={handleViewSidebar}>
-                <Arrow classes="fill-white"></Arrow>
+        <div className="flex max-md:hidden">
+            <button
+                className="transition-colors duration-300 hover:bg-gray-700 my-auto h-20 bg-primary-dark cursor-pointer"
+                onClick={handleViewSidebar}
+            >
+                <Arrow
+                    classes={"transition-transform duration-300 fill-white " + (sidebarOpen ? "" : "rotate-180")}
+                ></Arrow>
             </button>
 
             <div
                 className={
-                    "transition-all delay-150 duration-300 overflow-hidden " + (sidebarOpen ? "max-w-xs" : "max-w-0")
+                    "transition-all duration-300 overflow-hidden ease-in-out " + (sidebarOpen ? "max-w-xs" : "max-w-0")
                 }
             >
                 <div className="pe-5">
-                    <div className="border-b border-gray-200 dark:border-gray-700">
-                        <ul className="flex text-center text-xl dark:text-gray-400">
+                    <div className="border-b border-gray-200 dark:border-primary-light">
+                        <ul className="flex text-center text-xl dark:text-primary-light">
                             <Page thisPage={EPage.DETAILS} selectedPage={selectedPage} pageFunction={setPage}></Page>
                             <Page thisPage={EPage.SETTINGS} selectedPage={selectedPage} pageFunction={setPage}></Page>
                             <Page thisPage={EPage.LAYERS} selectedPage={selectedPage} pageFunction={setPage}></Page>
@@ -75,15 +80,15 @@ function PageContent({ selectedPage = EPage.DETAILS }) {
 }
 
 function DetailsPage() {
-    return <div className="dark:text-white">Details</div>;
+    return <div className="dark:text-white">Details - WIP</div>;
 }
 
 function SettingsPage() {
-    return <div className="dark:text-white">Settings</div>;
+    return <div className="dark:text-white">Settings - WIP</div>;
 }
 
 function LayersPage() {
-    return <div className="dark:text-white">Layers</div>;
+    return <div className="dark:text-white">Layers - WIP</div>;
 }
 
 export default RightBar;

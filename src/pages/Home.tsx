@@ -1,10 +1,10 @@
-import CanvasContainer from "../components/CanvasContainer.tsx";
+import CanvasContainer from "../components/Home/CanvasContainer.tsx";
 import LoadingModal from "../components/modals/LoadingMVR.tsx";
 import { ProgressStepsProvider } from "../contexts/ProgressContext.tsx";
 import Layout from "../components/Layout.tsx";
-import Actions from "../components/Actions.tsx";
-import LeftBar from "../components/LeftBar.tsx";
-import RightBar from "../components/RightBar.tsx";
+import Actions from "../components/Home/Actions.tsx";
+import LeftBar from "../components/Home/LeftBar.tsx";
+import RightBar from "../components/Home/RightBar.tsx";
 
 function Home() {
     return (

@@ -21,6 +21,7 @@ export default {
         renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true, canvas: canvas });
         camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 100000);
         controls = new OrbitControls(camera, renderer.domElement);
+        renderer.setClearColor(0x2a2b2e, 1);
 
         // Enable damping (inertia) and set damping factor
         controls.enableDamping = true;
@@ -56,11 +57,6 @@ export default {
             renderer.setSize(width, height, false);
         }
         return needResize;
-    },
-
-    setRenderer: function (width: number, height: number): void {
-        renderer.setSize(width, height);
-        renderer.setClearColor(0x2a2b2e, 1);
     },
 
     call: function () {

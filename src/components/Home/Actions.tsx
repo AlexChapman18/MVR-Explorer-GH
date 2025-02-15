@@ -1,15 +1,15 @@
 import React from "react";
-import MVRFile from "../icons/icon_mvr_file.tsx";
-import MVRFolder from "../icons/icon_mvr_folder.tsx";
-import FitScreen from "../icons/icon_fit_screen.tsx";
-import ResetCamera from "../icons/icon_reset_camera.tsx";
-import CameraPerspective from "../icons/icon_camera_perspective.tsx";
-import CameraOrth from "../icons/icon_camera_orth.tsx";
-import Punter from "../icons/icon_punter.tsx";
-import FileUpload from "./actionComponents/FileUpload.tsx";
-import TmpButton from "./actionComponents/TmpButton.tsx";
-import IActionLogic from "./actionComponents/IAction.ts";
-import Examples from "../icons/icon_examples.tsx";
+import MVRFile from "../../icons/icon_mvr_file.tsx";
+import MVRFolder from "../../icons/icon_mvr_folder.tsx";
+import FitScreen from "../../icons/icon_fit_screen.tsx";
+import ResetCamera from "../../icons/icon_reset_camera.tsx";
+import CameraPerspective from "../../icons/icon_camera_perspective.tsx";
+import CameraOrth from "../../icons/icon_camera_orth.tsx";
+import Punter from "../../icons/icon_punter.tsx";
+import FileUpload from "../actionComponents/FileUpload.tsx";
+import TmpButton from "../actionComponents/TmpButton.tsx";
+import IActionLogic from "../actionComponents/IAction.ts";
+import Examples from "../../icons/icon_examples.tsx";
 
 // All of the actions related to files
 const fileActions = [
@@ -47,8 +47,8 @@ const punterActions = [{ actionLabel: "Punter POV", ActionIcon: Punter, ActionEl
 function CreateActionButton(props: IActionButton): JSX.Element {
     return props.ActionElement(
         props.ActionIcon,
-        "p-3 hover:bg-gray-800",
-        "fill-white h-6 w-auto " + props.actionClasses,
+        "p-3 hover:bg-gray-800 cursor-pointer",
+        "fill-white h-5 w-auto " + props.actionClasses,
     );
 }
 
