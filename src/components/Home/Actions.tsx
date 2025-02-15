@@ -55,9 +55,10 @@ const punterActions = [{ actionLabel: "Punter POV", ActionIcon: Punter, ActionEl
 function CreateActionButton(props: IActionButton): JSX.Element {
     return props.ActionElement(
         props.ActionIcon,
-        "p-3 " + (props.active ? "cursor-pointer actions-tooltip-anchor hover:bg-gray-800 " : ""),
-        "h-5 w-auto " + (props.active ? "fill-white " : "fill-gray-700 ") + props.actionClasses,
-        props.actionLabel,
+        "p-3 actions-tooltip-anchor hover:bg-gray-800 transition-colors duration-100 " +
+            (props.active ? "cursor-pointer" : "cursor-not-allowed"),
+        "h-5 w-auto fill-white " + (props.active ? "" : "opacity-15 ") + props.actionClasses,
+        (props.active ? "" : "WIP: \n ") + props.actionLabel,
     );
 }
 

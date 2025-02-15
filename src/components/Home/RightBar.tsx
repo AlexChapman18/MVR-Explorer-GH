@@ -55,7 +55,7 @@ function Page({ thisPage = EPage.DETAILS, selectedPage = EPage.DETAILS, pageFunc
         <li className="">
             <button
                 className={
-                    "inline-flex items-center justify-center px-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 dark:hover:text-white hover:border-gray-300 group " +
+                    "inline-flex items-center justify-center px-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 dark:hover:text-white hover:border-gray-300 group transition-colors duration-100 cursor-pointer " +
                     (thisPage == selectedPage ? "dark:text-white dark:border-gray-300" : "")
                 }
                 onClick={handleClick}

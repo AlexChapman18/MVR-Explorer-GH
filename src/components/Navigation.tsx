@@ -5,20 +5,26 @@ import IconGitHub from "../icons/icon_github.tsx";
 const REPO_URL: string = "https://github.com/AlexChapman18/MVR-Explorer";
 
 const navLinks = [
-    { href: "mailto:alex.d.chapman@outlook.com", label: "Contact" },
-    { href: "#", label: "Tutorial" },
-    { href: "#", label: "FAQ" },
+    { href: "mailto:alex.d.chapman@outlook.com", label: "Contact", active: true },
+    { href: "#", label: "Tutorial", active: false },
+    { href: "#", label: "Updates" },
 ];
 
-const NavLink = ({ href, label }: { href: string; label: string }) => (
+const NavLink = ({ href, label, active }: { href: string; label: string; active: boolean }) => (
     <li className="py-1 md:py-0">
-        <a href={href} className="text-xl font-semibold hover:text-accent-one transition-colors duration-100">
+        <a
+            href={href}
+            className={
+                "text-xl font-semibold transition-colors duration-100 " +
+                (active ? "hover:text-accent-one" : "opacity-40 cursor-not-allowed")
+            }
+        >
             {label}
         </a>
     </li>
 );
 
-const NavLinks = ({ links }: { links: { label: string; href: string }[] }) => (
+const NavLinks = ({ links }: { links: { label: string; href: string; active: boolean }[] }) => (
     <ul className="flex items-center font-medium md:space-x-5 flex-col md:flex-row pb-1 md:pb-0">
         {links.map((link) => (
             <NavLink key={link.label} {...link} />
@@ -64,7 +70,7 @@ function Navigation() {
                 <span className="max-md:hidden">{fileName}</span>
                 <div className="flex md:flex-row-reverse">
                     <a className="cursor-pointer" href={REPO_URL}>
-                        <IconGitHub classes="fill-white h-10 w-auto ps-4 hover:fill-accent-one transition-colors duration-100" />
+                        <IconGitHub classes="fill-white h-10 w-auto ms-4 hover:fill-accent-one transition-colors duration-100" />
                     </a>
 
                     <div className="hidden md:flex">

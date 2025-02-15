@@ -25,6 +25,7 @@ const settingsRanges = [
         title: "Fog Density",
         defaultValue: 0,
         onChangeFunction: tmpFunc,
+        active: false,
     },
 ];
 
@@ -35,18 +36,21 @@ const settingsDropdowns = [
         defaultOption: ErenderTechniques.REALISTIC,
         options: [ErenderTechniques.WIREFRAME, ErenderTechniques.REALISTIC],
         onSelectFunction: tmpFunc,
+        active: false,
     },
     {
         title: "Auto Orbit",
         defaultOption: EautoOrbit.DISABLED,
         options: [EautoOrbit.DISABLED, EautoOrbit.SLOW, EautoOrbit.MEDIUM, EautoOrbit.FAST],
         onSelectFunction: tmpFunc,
+        active: false,
     },
     {
         title: "Background",
         defaultOption: Ebackground.SOLID,
         options: [Ebackground.SOLID, Ebackground.DAY, Ebackground.NIGHT],
         onSelectFunction: tmpFunc,
+        active: false,
     },
 ];
 
@@ -100,16 +104,17 @@ interface ISettingRange {
     title: string; // Dropdown title
     defaultValue: number; // Default selected option
     onChangeFunction: (value: number) => void; // Function to call when selection is changed
+    active: boolean;
 }
 
 function SettingRange(props: ISettingRange) {
     return (
-        <>
+        <div className={props.active ? "" : "opacity-50"}>
             <label htmlFor="small-range" className="block mt-3 text-sm text-gray-900 dark:text-white">
-                {props.title}
+                {(props.active ? "" : "WIP: ") + props.title}
             </label>
             <input
-                disabled // Remove when implemented
+                disabled={!props.active}
                 id="small-range"
                 type="range"
                 defaultValue={props.defaultValue}
@@ -117,9 +122,9 @@ function SettingRange(props: ISettingRange) {
                 max="100"
                 step="10"
                 onChange={(e) => props.onChangeFunction(+e.target.value)}
-                className="w-full h-2 cursor-pointer"
+                className={"w-full h-2 " + (props.active ? "cursor-pointer" : "cursor-not-allowed")}
             />
-        </>
+        </div>
     );
 }
 
@@ -133,20 +138,24 @@ interface ISettingDropdown<OptionType extends string | number> {
     defaultOption: OptionType; // Default selected option
     options: OptionType[]; // All possible options
     onSelectFunction: (option: OptionType) => void; // Function to call when selection is changed
+    active: boolean;
 }
 
 // (OptionType extends string | number) = Enum
 function SettingDropdown<OptionType extends string | number>(props: ISettingDropdown<OptionType>) {
     return (
-        <>
+        <div className={props.active ? "" : "opacity-50"}>
             <label htmlFor="countries" className="block mt-2 mb-1 text-sm font-normal text-gray-900 dark:text-white">
                 {/* Title of settings */}
-                {props.title}
+                {(props.active ? "" : "WIP: ") + props.title}
             </label>
             <select
-                disabled // Remove when implemented
+                disabled={!props.active}
                 id="countries"
-                className="bg-gray-50 text-gray-900 text-sm rounded-xs focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={
+                    "bg-gray-50 text-gray-900 text-sm rounded-xs focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 " +
+                    (props.active ? "cursor-pointer" : "cursor-not-allowed")
+                }
                 defaultValue={props.defaultOption} // Default selected setting
                 onChange={(e) => props.onSelectFunction(e.target.value as OptionType)} // What to do when setting changes
             >
@@ -157,7 +166,7 @@ function SettingDropdown<OptionType extends string | number>(props: ISettingDrop
                     </option>
                 ))}
             </select>
-        </>
+        </div>
     );
 }
 
