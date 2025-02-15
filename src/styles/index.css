@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "react-tooltip/dist/react-tooltip.css";
 
 body,
 html {
@@ -25,4 +26,13 @@ body,
 #root {
     display: flex;
     flex-direction: column;
+
+    /* Tooltip styles */
+    --rt-color-white: #fff;
+    --rt-color-dark: #222;
+    --rt-color-success: #8dc572;
+    --rt-color-error: #be6464;
+    --rt-color-warning: #f0ad4e;
+    --rt-color-info: #337ab7;
+    --rt-opacity: 1;
 }

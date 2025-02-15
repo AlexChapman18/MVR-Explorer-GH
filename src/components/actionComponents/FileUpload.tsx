@@ -2,7 +2,7 @@ import { useProgressStepsContext } from "../../contexts/ProgressContext.tsx";
 import MVRMain from "../../MVR-Renderer/Main.ts";
 import IAction from "./IAction.ts";
 
-const FileUpload: IAction = (ActionIcon, containerClasses, iconClasses) => {
+const FileUpload: IAction = (ActionIcon, containerClasses, iconClasses, actionLabel) => {
     const psContext = useProgressStepsContext();
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -13,7 +13,7 @@ const FileUpload: IAction = (ActionIcon, containerClasses, iconClasses) => {
     };
 
     return (
-        <label htmlFor="fileInput" className={containerClasses} key="">
+        <label htmlFor="fileInput" className={containerClasses} data-tooltip-content={actionLabel}>
             <ActionIcon classes={iconClasses} />
             <input id="fileInput" type="file" accept=".mvr" onChange={handleFileChange} className="hidden"></input>
         </label>
