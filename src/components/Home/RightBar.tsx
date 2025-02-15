@@ -22,7 +22,7 @@ function RightBar() {
 
             <div
                 className={
-                    "transition-all duration-300 overflow-hidden ease-in-out " + (sidebarOpen ? "max-w-xs" : "max-w-0")
+                    "transition-all duration-400 overflow-hidden ease-in-out " + (sidebarOpen ? "max-w-xs" : "max-w-0")
                 }
             >
                 <div className="pe-5">

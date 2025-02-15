@@ -2,15 +2,17 @@ import { useState } from "react";
 import IconMVRX from "../icons/icon_mvr_x.png";
 import IconGitHub from "../icons/icon_github.tsx";
 
+const REPO_URL: string = "https://github.com/AlexChapman18/MVR-Explorer";
+
 const navLinks = [
-    { href: "#", label: "Contact" },
+    { href: "mailto:alex.d.chapman@outlook.com", label: "Contact" },
     { href: "#", label: "Tutorial" },
     { href: "#", label: "FAQ" },
 ];
 
 const NavLink = ({ href, label }: { href: string; label: string }) => (
     <li className="py-1 md:py-0">
-        <a href={href} className="text-xl font-semibold hover:text-blue-500">
+        <a href={href} className="text-xl font-semibold hover:text-accent-one transition-colors duration-100">
             {label}
         </a>
     </li>
@@ -55,13 +57,16 @@ function Navigation() {
     return (
         <nav className="bg-primary text-white">
             <div className="flex flex-wrap items-center justify-between mx-auto py-4 px-5">
-                <a href="https://flowbite.com/" className="flex items-center space-x-3">
+                <a href="/" className="flex items-center space-x-3">
                     <img src={IconMVRX} className="h-10" alt="MVR x GDTF cross Logo" />
                     <span className="self-center text-2xl whitespace-nowrap">MVR Explorer</span>
                 </a>
                 <span className="max-md:hidden">{fileName}</span>
                 <div className="flex md:flex-row-reverse">
-                    <IconGitHub classes="fill-white h-10 w-auto ps-4" />
+                    <a className="cursor-pointer" href={REPO_URL}>
+                        <IconGitHub classes="fill-white h-10 w-auto ps-4 hover:fill-accent-one transition-colors duration-100" />
+                    </a>
+
                     <div className="hidden md:flex">
                         <NavLinks links={navLinks} />
                     </div>

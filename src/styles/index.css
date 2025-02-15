@@ -9,6 +9,8 @@ html {
     --color-primary: oklch(28.92% 0.0056 271.22);
     --color-primary-dark: oklch(23.93% 0 0);
     --color-primary-light: oklch(57.95% 0 0);
+    --color-accent-one: rgb(44, 122, 246);
+    --color-accent-two: rgb(255, 91, 221);
 }
 
 html,

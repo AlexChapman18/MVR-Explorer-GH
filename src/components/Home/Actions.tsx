@@ -14,7 +14,12 @@ import Examples from "../../icons/icon_examples.tsx";
 // All of the actions related to files
 const fileActions = [
     { actionLabel: "Open Local MVR", ActionIcon: MVRFolder, ActionElement: FileUpload },
-    { actionLabel: "Open Example MVR", ActionIcon: Examples, ActionElement: TmpButton },
+    {
+        actionLabel: "Open Example MVR",
+        ActionIcon: Examples,
+        ActionElement: TmpButton,
+        actionClasses: "scale-110",
+    },
 ];
 
 // All actions related to camera
