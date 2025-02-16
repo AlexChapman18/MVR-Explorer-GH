@@ -4,7 +4,7 @@
 import Navigation from "./Navigation.tsx";
 // import Footer from "../components/Footer";
 
-function Layout({ children }) {
+function Layout({ children }: { children: JSX.Element[] }) {
     return (
         <>
             <Navigation />
