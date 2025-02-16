@@ -5,6 +5,7 @@ import Layout from "../components/Layout.tsx";
 import Actions from "../components/Home/Actions.tsx";
 import LeftBar from "../components/Home/LeftBar.tsx";
 import RightBar from "../components/Home/RightBar.tsx";
+import Introduction from "../components/modals/Introduction.tsx";
 
 function Home() {
     return (
@@ -19,6 +20,7 @@ function Home() {
                 </div>
 
                 {/* Modals */}
+                <Introduction />
                 <LoadingModal />
             </Layout>
         </ProgressStepsProvider>

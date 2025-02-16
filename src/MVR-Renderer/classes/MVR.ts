@@ -5,7 +5,6 @@ import { GSD } from "./GSD.ts";
 import { Model, Models, GeometryMap } from "../utils/modelUtils.ts";
 import { LoadingManager } from "three";
 import { ProgressStepsContextType, StepStatus, StepName } from "../../contexts/ProgressContextUtils.ts";
-import { delay } from "../utils/generalUtils.ts";
 
 const loadingManager = new LoadingManager();
 const GENERAL_SCENE_DESCRIPTION = "GeneralSceneDescription.xml";

@@ -6,7 +6,11 @@ import { useProgressStepsContext } from "../contexts/ProgressContextUtils.ts";
 const REPO_URL: string = "https://github.com/AlexChapman18/MVR-Explorer";
 
 const navLinks = [
-    { href: "mailto:alex.d.chapman@outlook.com", label: "Contact", active: true },
+    {
+        href: "https://docs.google.com/forms/d/e/1FAIpQLSdUar5S5fN8QcrZJru6jkBx2S0jwzwl_O0BJPJQKYJHhShc9Q/viewform?usp=dialog",
+        label: "Contact",
+        active: true,
+    },
     { href: "#", label: "Tutorial", active: false },
     { href: "#", label: "Updates", active: false },
 ];
