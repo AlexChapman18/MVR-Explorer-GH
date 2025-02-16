@@ -3,6 +3,7 @@ import { Model } from "../MVR-Renderer/utils/modelUtils.ts";
 import { StepStatus, StepName, ProgressStepsContextType } from "../contexts/ProgressContextUtils.ts";
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { delay } from "./utils/generalUtils.ts";
 
 let renderer: THREE.WebGLRenderer;
 let controls: OrbitControls;
@@ -135,6 +136,7 @@ export default {
             this.setLightPosition(0, boundingBox.max.y * 1.5, boundingBox.max.z * 1.5);
 
             psContext.setProgressStatus(StepName.DRAWING_MODELS, StepStatus.SUCCESS);
+            await delay(100);
         } catch (error) {
             console.error("Error loading models: ", error);
         }

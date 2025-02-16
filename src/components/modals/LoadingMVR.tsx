@@ -28,7 +28,7 @@ function LoadingMVR() {
                                 displayTotalNumFiles={progressSteps[StepName.EXTRACTING_MVR]?.numFilesToProcess}
                             />
                             <ProgressSection
-                                title={"Fetching Fixtures"}
+                                title={"WIP: Fetching Fixtures"}
                                 status={progressSteps[StepName.FETCHING_FIXTURES]?.status}
                                 displayCurrentFileNum={progressSteps[StepName.FETCHING_FIXTURES]?.numFilesProcessed}
                                 displayTotalNumFiles={progressSteps[StepName.FETCHING_FIXTURES]?.numFilesToProcess}

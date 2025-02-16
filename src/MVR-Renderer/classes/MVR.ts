@@ -43,18 +43,18 @@ export class MVR {
     }
 
     async fetchFixtures() {
-        this.psContext.setProgressStatus(StepName.FETCHING_FIXTURES, StepStatus.PENDING);
+        this.psContext.setProgressStatus(StepName.FETCHING_FIXTURES, StepStatus.ERROR);
 
-        const NUM_FIXTURES = 6;
+        // const NUM_FIXTURES = 0;
 
-        this.psContext.setNumFilesToProcess(StepName.FETCHING_FIXTURES, 6);
+        // this.psContext.setNumFilesToProcess(StepName.FETCHING_FIXTURES, NUM_FIXTURES);
 
-        for (let i = 1; i <= NUM_FIXTURES; i++) {
-            await delay(250);
-            this.psContext.setNumFilesProcessed(StepName.FETCHING_FIXTURES, i);
-        }
+        // for (let i = 1; i <= NUM_FIXTURES; i++) {
+        //     await delay(250);
+        //     this.psContext.setNumFilesProcessed(StepName.FETCHING_FIXTURES, i);
+        // }
 
-        this.psContext.setProgressStatus(StepName.FETCHING_FIXTURES, StepStatus.SUCCESS);
+        // this.psContext.setProgressStatus(StepName.FETCHING_FIXTURES, StepStatus.SUCCESS);
     }
 
     // Generate a list of model and return it
