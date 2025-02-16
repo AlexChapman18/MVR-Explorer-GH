@@ -4,9 +4,12 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"; // Load G
 import { TDSLoader } from "three/examples/jsm/loaders/TDSLoader.js"; // Load .3ds model files
 
 // Get the Mesh from the .3ds file ArrayBuffer
-export async function load3DSGeometry(modelData: ArrayBuffer): Promise<THREE.BufferGeometry> {
+export async function load3DSGeometry(
+    modelData: ArrayBuffer,
+    loadingManager: THREE.LoadingManager,
+): Promise<THREE.BufferGeometry> {
     return new Promise((resolve, reject) => {
-        const loader = new TDSLoader();
+        const loader = new TDSLoader(loadingManager);
 
         const modelURL = URL.createObjectURL(new Blob([modelData]));
 
@@ -29,9 +32,12 @@ export async function load3DSGeometry(modelData: ArrayBuffer): Promise<THREE.Buf
 }
 
 // Get the Mesh from the .glb file ArrayBuffer
-export async function loadGLBGeometry(modelData: ArrayBuffer): Promise<THREE.BufferGeometry> {
+export async function loadGLBGeometry(
+    modelData: ArrayBuffer,
+    loadingManager: THREE.LoadingManager,
+): Promise<THREE.BufferGeometry> {
     return new Promise((resolve, reject) => {
-        const loader = new GLTFLoader();
+        const loader = new GLTFLoader(loadingManager);
 
         const modelURL = URL.createObjectURL(new Blob([modelData]));
 

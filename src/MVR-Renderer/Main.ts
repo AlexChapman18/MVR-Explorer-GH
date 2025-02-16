@@ -1,50 +1,71 @@
-// Package imports
-import * as THREE from "three"; // To create and display animated 3D computer graphics
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js"; // Have camera orbit around the rig
-import { MVR } from "./classes/MVR.ts";
-import { Model } from "./utils/modelUtils.ts";
+import { MVR } from "../MVR-Renderer/classes/MVR.ts";
+import { Model } from "../MVR-Renderer/utils/modelUtils.ts";
+import { StepStatus, StepName, ProgressStepsContextType } from "../contexts/ProgressContextUtils.ts";
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { delay } from "./utils/generalUtils.ts";
 
-// File Imports
-// import capture_demo_show from './assets/Showfiles/capture_demo_show.mvr'; // Example mvr file
+let renderer: THREE.WebGLRenderer;
+let controls: OrbitControls;
+let camera: THREE.PerspectiveCamera;
+const scene = new THREE.Scene();
+const light = new THREE.DirectionalLight(0xffeedd, 1);
 
-export function init(refContainer: React.MutableRefObject<HTMLElement | null>) {
-    // Don't render canvases if init is called multiple times
-    if (refContainer.current?.hasChildNodes()) {
-        return;
-    }
+export default {
+    scene,
+    light,
 
-    // Create scene
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const scene = new THREE.Scene();
+    init: function (canvas: HTMLCanvasElement) {
+        renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true, canvas: canvas });
+        camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 100000);
+        controls = new OrbitControls(camera, renderer.domElement);
+        renderer.setClearColor(0x2a2b2e, 1);
 
-    // Create camera, Renderer, controls, and light
-    const camera: THREE.PerspectiveCamera = createCamera();
-    const renderer: THREE.WebGLRenderer = createRenderer();
-    const controls: OrbitControls = createControls();
-    const light: THREE.DirectionalLight = createLight();
+        // Enable damping (inertia) and set damping factor
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
 
-    // Add scene to element
-    refContainer.current!.appendChild(renderer.domElement);
+        // Add light to scene
+        scene.add(light);
 
-    // ----- File handling
-    const fileInput = document.getElementById("fileInput")!;
-    fileInput.addEventListener("change", handleFileUpload);
-    // File handling -----
+        const resizeCanvasToDisplaySize = this.resizeCanvasToDisplaySize;
 
-    // Animate scene
-    function animate() {
+        function animate() {
+            if (resizeCanvasToDisplaySize()) {
+                const canvas = renderer.domElement;
+                camera.aspect = canvas.clientWidth / canvas.clientHeight;
+                camera.updateProjectionMatrix();
+            }
+            controls.update(); // only required if controls.enableDamping = true, or if controls.autoRotate = true
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+
         requestAnimationFrame(animate);
+
         renderer.render(scene, camera);
-        controls.update();
-    }
-    animate();
+    },
 
-    // Handle window resizing
-    window.addEventListener("resize", handleWindowResize, false);
+    resizeCanvasToDisplaySize: function (): boolean {
+        const canvas = renderer.domElement;
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        const needResize = canvas.width !== width || canvas.height !== height;
+        if (needResize) {
+            renderer.setSize(width, height, false);
+        }
+        return needResize;
+    },
 
-    // Remove all models on scene
-    function clean() {
+    call: function () {
+        console.log("Calling log");
+    },
+    loadFile: async function (file: File, PSContext: ProgressStepsContextType) {
+        PSContext.setMVRName(file.name);
+        await this.loadScene(file, PSContext); // Wait for loadScene to complete
+    },
+    // Remove all models from scene and re-render
+    clean: function () {
         const meshes: THREE.Mesh[] = [];
 
         // If a mesh, add to meshes "Executes the callback on this object and all descendants."
@@ -62,100 +83,33 @@ export function init(refContainer: React.MutableRefObject<HTMLElement | null>) {
             }
             scene.remove(mesh!);
         }
-    }
-
-    // Handle window resize
-    // TODO: Improve
-    function handleWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-
-    // Create the renderer
-    function createRenderer(): THREE.WebGLRenderer {
-        const renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            logarithmicDepthBuffer: true,
-        });
-        renderer.setSize(width, height);
-        renderer.setClearColor(0x333333, 1);
-        return renderer;
-    }
-
-    // Create orbit controls
-    // TODO: Improve
-    function createControls(): OrbitControls {
-        // Set orbit controls (Use mouse to look around)
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        return controls;
-    }
-
-    // Triggered when a file is uploaded
-    function handleFileUpload(event: Event) {
-        try {
-            const file: File = loadFile(event);
-            loadScene(file);
-        } catch (error) {
-            if (error instanceof Error) alert(error.message); // Handle the error
-        }
-    }
-
-    // Load the mvr file
-    function loadFile(event: Event): File | never {
-        const inputElement = event.target as HTMLInputElement;
-
-        if (!inputElement || !inputElement.files || !inputElement.files[0])
-            throw new Error("Error, no target or files");
-
-        const file: File = inputElement.files[0];
-
-        if (!file.name.endsWith(".mvr")) throw new Error("File '" + file.name + "' is not a .mvr file");
-        return file;
-    }
-
-    // Create a base camera
-    function createCamera(): THREE.PerspectiveCamera {
-        const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 100000);
-        return camera;
-    }
-
-    // Move the camera and reset orbit position to 0,0,0
-    function setOrbitCamera(x: number, y: number, z: number) {
-        controls.target = new THREE.Vector3(0, 0, 0);
-        camera.position.set(x, y, z);
-        controls.update();
-    }
-
-    // Create a directional light (Points towards 0,0,0)
-    function createLight(): THREE.DirectionalLight {
-        const light = new THREE.DirectionalLight(0xffeedd, 1);
-        scene.add(light);
-        return light;
-    }
-
-    // Move the light
-    function setLightPosition(x: number, y: number, z: number) {
-        light.position.set(x, y, z);
-    }
+        renderer.render(scene, camera);
+    },
 
     // Function to load a zip, extract and load all .3ds files
-    async function loadScene(file: File) {
+    loadScene: async function (file: File, psContext: ProgressStepsContextType) {
+        psContext.startProgressSteps();
+
         // Remove existing MVR model if one
-        clean();
+        this.clean();
 
         // Create and initialise new MVR model
-        const mvr = new MVR(file);
+        const mvr = new MVR(file, psContext);
+        psContext.setProgressStatus(StepName.EXTRACTING_MVR, StepStatus.PENDING);
         await mvr.init(); // Initialize MVR (Load models n stuff)
+        psContext.setNumFilesProcessed(StepName.EXTRACTING_MVR, 1);
+        psContext.setProgressStatus(StepName.EXTRACTING_MVR, StepStatus.SUCCESS);
 
         // Load all models
         try {
             const models: Model[] = mvr.getModels();
             const boundingBox = new THREE.Box3();
             const material = new THREE.MeshStandardMaterial(); // Using standard Material for now
+            psContext.setProgressStatus(StepName.DRAWING_MODELS, StepStatus.PENDING);
+            psContext.setNumFilesToProcess(StepName.DRAWING_MODELS, models.length);
 
-            models.forEach((model) => {
+            //
+            models.forEach(async (model, index) => {
                 // Computer bounding sphere(used to place camera at start)
                 if (!model.geometry.boundingBox) {
                     model.geometry.computeBoundingBox();
@@ -170,18 +124,38 @@ export function init(refContainer: React.MutableRefObject<HTMLElement | null>) {
                     instancedMesh.setMatrixAt(index, modelMetadata.matrix);
                 });
 
-                // Force a re-render
+                // Force a re-render and add to scene
                 instancedMesh.instanceMatrix.needsUpdate = true;
-
-                // Add to scene
                 scene.add(instancedMesh);
+
+                psContext.setNumFilesProcessed(StepName.DRAWING_MODELS, index);
             });
 
             // Adjust camera position based on the bounding sphere
-            setOrbitCamera(0, boundingBox.max.y * 1.5, boundingBox.max.z * 1.5);
-            setLightPosition(0, boundingBox.max.y * 1.5, boundingBox.max.z * 1.5);
+            this.setOrbitCamera(0, boundingBox.max.y * 1.5, boundingBox.max.z * 1.5);
+            this.setLightPosition(0, boundingBox.max.y * 1.5, boundingBox.max.z * 1.5);
+
+            psContext.setProgressStatus(StepName.DRAWING_MODELS, StepStatus.SUCCESS);
+            await delay(100);
         } catch (error) {
             console.error("Error loading models: ", error);
         }
-    }
-}
+
+        // Close ProgressSteps
+        psContext.finishProgressSteps();
+
+        renderer.render(scene, camera); // render once when the scene has been setup
+    },
+
+    // Move the camera and reset orbit position to 0,0,0
+    setOrbitCamera: function (x: number, y: number, z: number) {
+        controls.target = new THREE.Vector3(0, 0, 0);
+        camera.position.set(x, y, z);
+        controls.update();
+    },
+
+    // Move the light
+    setLightPosition: function (x: number, y: number, z: number) {
+        light.position.set(x, y, z);
+    },
+};

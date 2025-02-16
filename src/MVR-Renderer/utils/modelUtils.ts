@@ -4,6 +4,7 @@ import * as THREE from "three";
 export interface ModelMetadata {
     matrix: THREE.Matrix4; // Transformation
     layer: string; // Layer model is contained on
+    fileName: string; // Layer model is contained on
 }
 
 // An individual Model
@@ -37,7 +38,7 @@ export class Models {
 // Maps filenames to transition matrices
 export class MetadataMap extends Map<string, ModelMetadata[]> {
     add(fileName: string, matrix: THREE.Matrix4, layer: string): void {
-        const modelMetadata = { matrix, layer };
+        const modelMetadata = { matrix, layer, fileName };
         if (!this.has(fileName)) {
             this.set(fileName, []);
         }
