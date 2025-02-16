@@ -24,7 +24,7 @@ const settingsRanges = [
     {
         title: "Fog Density",
         defaultValue: 0,
-        onChangeFunction: tmpFunc,
+        onChangeFunction: () => {},
         active: false,
     },
 ];
@@ -35,21 +35,21 @@ const settingsDropdowns = [
         title: "Render Technique",
         defaultOption: ErenderTechniques.REALISTIC,
         options: [ErenderTechniques.WIREFRAME, ErenderTechniques.REALISTIC],
-        onSelectFunction: tmpFunc,
+        onSelectFunction: () => {},
         active: false,
     },
     {
         title: "Auto Orbit",
         defaultOption: EautoOrbit.DISABLED,
         options: [EautoOrbit.DISABLED, EautoOrbit.SLOW, EautoOrbit.MEDIUM, EautoOrbit.FAST],
-        onSelectFunction: tmpFunc,
+        onSelectFunction: () => {},
         active: false,
     },
     {
         title: "Background",
         defaultOption: Ebackground.SOLID,
         options: [Ebackground.SOLID, Ebackground.DAY, Ebackground.NIGHT],
-        onSelectFunction: tmpFunc,
+        onSelectFunction: () => {},
         active: false,
     },
 ];
@@ -71,7 +71,7 @@ function LeftBar() {
                     <h1 className="border-b border-white border-b text-center text-2xl">Settings</h1>
                     <div className="pe-1">
                         {settingsDropdowns.map((setting) =>
-                            React.cloneElement(SettingDropdown(setting), { key: setting.title }),
+                            React.cloneElement(SettingDropdown<string | number>(setting), { key: setting.title }),
                         )}
                         {settingsRanges.map((setting) =>
                             React.cloneElement(SettingRange(setting), { key: setting.title }),
@@ -96,9 +96,6 @@ function LeftBar() {
 //
 //
 //
-function tmpFunc(option: any): void {
-    // console.log(option);
-}
 
 interface ISettingRange {
     title: string; // Dropdown title

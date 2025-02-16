@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import Arrow from "../../icons/icon_arrow.tsx";
+import { EPage } from "./Constants.ts";
 
 function RightBar() {
     const [selectedPage, setPage] = useState(EPage.DETAILS);
@@ -40,13 +41,15 @@ function RightBar() {
     );
 }
 
-export enum EPage {
-    DETAILS = "Details",
-    SETTINGS = "Settings",
-    LAYERS = "Layers",
-}
-
-function Page({ thisPage = EPage.DETAILS, selectedPage = EPage.DETAILS, pageFunction = (_: EPage) => {} }) {
+function Page({
+    thisPage,
+    selectedPage,
+    pageFunction,
+}: {
+    thisPage: EPage;
+    selectedPage: EPage;
+    pageFunction: (page: EPage) => void;
+}) {
     function handleClick() {
         pageFunction(thisPage);
     }

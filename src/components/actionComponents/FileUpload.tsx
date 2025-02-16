@@ -1,4 +1,4 @@
-import { useProgressStepsContext } from "../../contexts/ProgressContext.tsx";
+import { useProgressStepsContext } from "../../contexts/ProgressContextUtils.ts";
 import MVRMain from "../../MVR-Renderer/Main.ts";
 import IAction from "./IAction.ts";
 

@@ -1,7 +1,7 @@
 import TickIcon from "../../../icons/Tick.tsx";
 import WaitingIcon from "../../../icons/Waiting.tsx";
 import CrossIcon from "../../../icons/Cross.tsx";
-import { StepStatus } from "../../../contexts/ProgressContext.tsx";
+import { StepStatus } from "../../../contexts/ProgressContextUtils.ts";
 
 function ProgressSection({
     title = "",

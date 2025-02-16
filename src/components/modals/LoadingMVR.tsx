@@ -1,5 +1,5 @@
 import ProgressSection from "./modal_components/ProgressSection.tsx";
-import { useProgressStepsContext, StepName } from "../../contexts/ProgressContext.tsx";
+import { useProgressStepsContext, StepName } from "../../contexts/ProgressContextUtils.ts";
 
 function LoadingMVR() {
     const { isVisible, MVRName, progressSteps } = useProgressStepsContext();

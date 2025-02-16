@@ -1,8 +1,8 @@
 import { MVR } from "../MVR-Renderer/classes/MVR.ts";
 import { Model } from "../MVR-Renderer/utils/modelUtils.ts";
-import { StepStatus, StepName, ProgressStepsContextType } from "../contexts/ProgressContext.tsx";
+import { StepStatus, StepName, ProgressStepsContextType } from "../contexts/ProgressContextUtils.ts";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 let renderer: THREE.WebGLRenderer;
 let controls: OrbitControls;
@@ -11,10 +11,7 @@ const scene = new THREE.Scene();
 const light = new THREE.DirectionalLight(0xffeedd, 1);
 
 export default {
-    renderer,
     scene,
-    camera,
-    controls,
     light,
 
     init: function (canvas: HTMLCanvasElement) {

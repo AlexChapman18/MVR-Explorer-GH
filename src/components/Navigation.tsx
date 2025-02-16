@@ -1,14 +1,14 @@
 import { useState } from "react";
 import IconMVRX from "../icons/icon_mvr_x.png";
 import IconGitHub from "../icons/icon_github.tsx";
-import { useProgressStepsContext } from "../contexts/ProgressContext.tsx";
+import { useProgressStepsContext } from "../contexts/ProgressContextUtils.ts";
 
 const REPO_URL: string = "https://github.com/AlexChapman18/MVR-Explorer";
 
 const navLinks = [
     { href: "mailto:alex.d.chapman@outlook.com", label: "Contact", active: true },
     { href: "#", label: "Tutorial", active: false },
-    { href: "#", label: "Updates" },
+    { href: "#", label: "Updates", active: false },
 ];
 
 const NavLink = ({ href, label, active }: { href: string; label: string; active: boolean }) => (
@@ -17,7 +17,7 @@ const NavLink = ({ href, label, active }: { href: string; label: string; active:
             href={href}
             className={
                 "text-xl font-semibold transition-colors duration-100 " +
-                (active ? "hover:text-accent-one" : "opacity-40 cursor-not-allowed")
+                (active ? "hover:text-accent-one" : "opacity-40 cursor-not-allowed line-through")
             }
         >
             {label}
