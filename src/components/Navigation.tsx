@@ -3,7 +3,7 @@ import IconMVRX from "../icons/icon_mvr_x.png";
 import IconGitHub from "../icons/icon_github.tsx";
 import { useProgressStepsContext } from "../contexts/ProgressContextUtils.ts";
 
-const REPO_URL: string = "https://github.com/AlexChapman18/MVR-Explorer";
+const REPO_URL: string = "https://github.com/AlexChapman18/MVR-Explorer-GH";
 
 const navLinks = [
     {

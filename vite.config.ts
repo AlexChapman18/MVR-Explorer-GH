@@ -4,5 +4,5 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
     plugins: [react(), tailwindcss()],
-    base: "/MVR-Explorer/",
+    base: "/MVR-Explorer-GH/",
 });
